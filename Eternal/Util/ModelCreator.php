@@ -262,6 +262,18 @@ EOD;
 			}
 			$setter .= <<<EOD
 		} else {
+
+EOD;
+
+			if ('\DateTime' === $columnInfo['type'] && 'null' !== $columnInfo['default']) {
+				$columnInfo['default'] = sprintf("'%s'", $columnInfo['default']);
+			}
+
+			if ("" === $columnInfo['default']) {
+				$columnInfo['default'] = 'null';
+			}
+
+			$setter .= <<<EOD
 			\$properties['{$columnInfo['column']}'] = {$columnInfo['default']};
 		}
 
