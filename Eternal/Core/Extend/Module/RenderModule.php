@@ -44,7 +44,7 @@ class RenderModule extends AbstractModule
 
 		$list = [];
 		if (false !== preg_match_all('/\{\{(.*)\}\}/', $data, $match)) {
-			$data = preg_replace('/(\{\{).*(\}\})/', '%s', $data);
+			$data = preg_replace('/(\{\{).*(\}\})/', '<#_#>', $data);
 
 			foreach ($match[1] as $value) {
 				if (false !== preg_match_all('/([a-zA-Z0-9]+)\:\:/u', $value, $classMatch)) {
@@ -66,6 +66,10 @@ class RenderModule extends AbstractModule
 			}
 		}
 
-		return empty($list) ? $data : vsprintf($data, $list);
+		foreach ($list as $l) {
+			$data = preg_replace('/\<\#\_\#\>/', $l, $data, 1);
+		}
+
+		return $data;
 	}
 }
