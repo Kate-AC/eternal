@@ -43,8 +43,8 @@ class RenderModule extends AbstractModule
 		}
 
 		$list = [];
-		if (false !== preg_match_all('/\{\{(.*)\}\}/', $data, $match)) {
-			$data = preg_replace('/(\{\{).*(\}\})/', '<#_#>', $data);
+		if (false !== preg_match_all('/\{\{([^\{\}]*)\}\}/', $data, $match)) {
+			$data = preg_replace('/(\{\{)[^\{\}]*(\}\})/', '<#_#>', $data);
 
 			foreach ($match[1] as $value) {
 				if (false !== preg_match_all('/([a-zA-Z0-9]+)\:\:/u', $value, $classMatch)) {
