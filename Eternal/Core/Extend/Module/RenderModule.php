@@ -49,9 +49,9 @@ class RenderModule extends AbstractModule
 			foreach ($match[1] as $value) {
 				if (false !== preg_match_all('/([a-zA-Z0-9]+)\:\:/u', $value, $classMatch)) {
 					foreach ($classMatch[1] as $class) {
-						$condition = sprintf('/%s(\:\:)/', $class);
-						$replace   = $this->classList[$class] . '::';
-						$value     = preg_replace($condition, $replace, $value);
+						$condition = sprintf('/([^\\\\]{1})%s(\:\:)/', $class);
+						$replace   = '$1' . $this->classList[$class] . '$2';
+						$value     = preg_replace($condition, $replace, $value, 1);
 					}
 				}
 

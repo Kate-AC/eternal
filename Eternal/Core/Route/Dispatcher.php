@@ -81,7 +81,7 @@ class Dispatcher
 		} catch (\Exception $e) {
 			$this->systemErrorLogger->write($e->getMessage());
 			if (true === USE_DEBUG_MODE) {
-				var_dump($e);
+				var_dump($e->getMessage());
 				exit;
 			}
 			include(TEMPLATE_DIR . 'not_found.php');
