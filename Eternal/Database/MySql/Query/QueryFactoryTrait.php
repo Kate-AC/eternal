@@ -16,23 +16,7 @@ trait QueryFactoryTrait
 	/**
 	 * @var string
 	 */
-	private $tableList = [];
-
-	/**
-	 * @var string
-	 */
 	private $dependencyList = [];
-
-	/**
-	 * 使用するテーブルのリストを生成
-	 */
-	private function makeTableList()
-	{
-		$this->tableList = [$this->tableName];
-		foreach ($this->formatedJoin as $join) {
-			$this->tableList[] = $join['join']['table'];
-		}
-	}
 
 	/**
 	 * エンティティの依存関係を生成
@@ -105,7 +89,6 @@ trait QueryFactoryTrait
 			return [];
 		}
 
-		$this->makeTableList();
 		$this->makeDependencyList();
 
 		$findList = [];
@@ -226,7 +209,6 @@ trait QueryFactoryTrait
 			return [];
 		}
 
-		$this->makeTableList();
 		$this->makeDependencyList();
 
 		$findList = [];
@@ -242,12 +224,11 @@ trait QueryFactoryTrait
 							'lat' => $match[2]
 						]
 					];
+				} else {
+					if ('_collect' !== $list[0] && false !== strpos($list[1], '.')) {
+						$list[1] = ltrim(strstr($list[1], '.'), '.');
+					}
 				}
-
-				if ('_collect' !== $list[0] && false !== strpos($list[1], '.')) {
-					$list[1] = ltrim(strstr($list[1], '.'), '.');
-				}
-
 				$array[$list[0]][$list[1]] = $value;
 			}
 
