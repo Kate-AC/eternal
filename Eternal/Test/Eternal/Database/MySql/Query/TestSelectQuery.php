@@ -52,32 +52,24 @@ class TestSelectQuery extends TestHelper
 		$selectQuery->select([
 			'hoge' => 'a_tbl.id',
 			'COUNT(a_tbl.name)',
-			'number' => $selectSubQuery
+			$selectSubQuery
 		], 'a');
 
 		$method = new \ReflectionMethod($selectQuery, 'getSelectLine');
 		$method->setAccessible(true);
-		$expected = 'a_tbl.id AS a_tbl___id, COUNT(a_tbl.name), ( SELECT b_tbl.id FROM b_tbl ) AS number';
+		$expected = 'a_tbl.id AS "a_tbl___a_tbl.id", COUNT(a_tbl.name) AS "_collect___COUNT(a_tbl.name)", ( SELECT b_tbl.id FROM b_tbl AS b_tbl ) AS "_collect___( SELECT b_tbl.id FROM b_tbl AS b_tbl )"';
 		$this->compareValue($expected, $method->invoke($selectQuery), 'select句を使用した場合');
 
 		$expected = [
 			'hoge' => [
 				'table'  => 'a_tbl',
 				'column' => 'id'
-			],
-			'COUNT(a_tbl.name)' => [
-				'table'  => '_collect',
-				'column' => 'COUNT(a_tbl.name)'
-			],
-			'number' => [
-				'table'  => '_collect',
-				'column' => '( SELECT b_tbl.id FROM b_tbl )'
 			]
 		];
 
 		$property = new \ReflectionProperty($selectQuery, 'propertyAsName');
 		$property->setAccessible(true);
-		$this->compareValue($expected, $property->getValue($selectQuery), 'tableAsName');
+		$this->compareValue($expected, $property->getValue($selectQuery), 'propertyAsName');
 	}
 
 	/**
@@ -87,7 +79,11 @@ class TestSelectQuery extends TestHelper
 	{
 		$selectQuery = Mock::m('System\Database\MySql\Query\SelectQuery');
 		$selectQuery->tableName = 'tbl_test_main_model';
-		$selectQuery->join      = [['join' => ['table' => 'tbl_test_join_model']]];
+		$selectQuery->tableAsName = [
+			'tbl_test_main_model' => 'tbl_test_main_model',
+			'tbl_test_join_model' => 'tbl_test_join_model'
+		];
+		$selectQuery->join = [['join' => ['table' => 'tbl_test_join_model']]];
 
 		$selectQuery->container = Mock::m('System\Core\Di\Container')
 			->_setMethod('getByTable')
@@ -223,7 +219,7 @@ class TestSelectQuery extends TestHelper
 	{
 		$selectQuery = Mock::m('System\Database\MySql\Query\SelectQuery');
 		$selectQuery->tableName = 'hoge';
-		$this->compareValue('hoge', $selectQuery->getFromLine(), 'fromが空の場合');
+		$this->compareValue('hoge AS hoge', $selectQuery->getFromLine(), 'fromが空の場合');
 
 		$from = Mock::m('System\Database\MySql\Query\SelectQuery');
 		$from->placeholder = [2, 3];
@@ -260,7 +256,7 @@ class TestSelectQuery extends TestHelper
 			]);
 		$selectQuery->indexHint('tbl_b', 'FORCE', ['id', 'name']);
 
-		$expected = 'LEFT JOIN tbl_b FORCE INDEX (id, name) ON tbl_a.id = tbl_b.id AND tbl_a.name = tbl_b.name';
+		$expected = 'LEFT JOIN tbl_b AS b FORCE INDEX (id, name) ON tbl_a.id = tbl_b.id AND tbl_a.name = tbl_b.name';
 		$method = new \ReflectionMethod($selectQuery, 'getJoinLine');
 		$method->setAccessible(true);
 		$this->compareValue($expected, $method->invoke($selectQuery));
@@ -286,7 +282,7 @@ class TestSelectQuery extends TestHelper
 		$selectQuery->_setMethod('getForUpdateLine')->_setArgs()->_setReturn('J')->e();
 		$selectQuery->_setMethod('getOffsetLine')->_setArgs()->_setReturn('K')->e();
 
-		$this->compareValue('COUNT(A.fuga) SELECT B FROM C D E F G H I J K', $selectQuery->create());
+		$this->compareValue('COUNT(hoge.fuga) SELECT B FROM C AS C D E F G H I J K', $selectQuery->create());
 	}
 }
 

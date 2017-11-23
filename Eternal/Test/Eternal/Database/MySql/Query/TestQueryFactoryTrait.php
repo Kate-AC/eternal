@@ -16,17 +16,12 @@ use Test\TestModel;
 class TestQueryFactoryTrait extends TestHelper
 {
 	/**
-	 * makeTableList
 	 * makeDependencyList
 	 */
-	public function makeTableListAndMakeDependencyListTest()
+	public function makeDependencyListTest()
 	{
 		$reflection = new \ReflectionClass('System\Database\MySql\Query\SelectQuery');
 		$instance   = $reflection->newInstanceWithoutConstructor();
-
-		$property = new \ReflectionProperty($instance, 'tableName');
-		$property->setAccessible(true);
-		$property->setValue($instance, 'hoge_tbl');
 
 		$property = new \ReflectionProperty($instance, 'formatedJoin');
 		$property->setAccessible(true);
@@ -60,20 +55,15 @@ class TestQueryFactoryTrait extends TestHelper
 
 		$property->setValue($instance, $formatedJoin);
 
-		$tableList = [
-			'hoge_tbl',
-			'fuga_tbl',
-			'piyo_tbl'
+		$tableAsName = [
+			'hoge_tbl' => 'hoge_tbl',
+			'fuga_tbl' => 'fuga_tbl',
+			'piyo_tbl' => 'piyo_tbl'
 		];
 
-		$method = new \ReflectionMethod($instance, 'makeTableList');
-		$method->setAccessible(true);
-		$method->invoke($instance);
-
-		$property = new \ReflectionProperty($instance, 'tableList');
+		$property = new \ReflectionProperty($instance, 'tableAsName');
 		$property->setAccessible(true);
-
-		$this->compareValue($tableList, $property->getValue($instance), 'makeTableList');
+		$property->setValue($instance, $tableAsName);
 
 		$method = new \ReflectionMethod($instance, 'makeDependencyList');
 		$method->setAccessible(true);
@@ -100,7 +90,7 @@ class TestQueryFactoryTrait extends TestHelper
 	public function unionTest()
 	{
 		$query = Mock::m('System\Database\MySql\Query\SelectQuery');
-		$query->tableName = 'hoge_tbl';
+		$query->asSelf = 'hoge_tbl';
 
 		$dependencyList = [
 			'hoge_tbl' => ['fuga_tbl', 'piyo_tbl'],
@@ -135,12 +125,8 @@ class TestQueryFactoryTrait extends TestHelper
 	public function uniteTest()
 	{
 		$query = Mock::m('System\Database\MySql\Query\SelectQuery');
-		$query->tableName = 'hoge_tbl';
+		$query->asSelf = 'hoge_tbl';
 
-		$query->_setMethod('makeTableList')
-			->_setArgs()
-			->_setReturn()
-			->e();
 		$query->_setMethod('makeDependencyList')
 			->_setArgs()
 			->_setReturn()
@@ -161,10 +147,10 @@ class TestQueryFactoryTrait extends TestHelper
 			->e();
 		$query->container = $container;
 
-		$query->tableList = [
-			'hoge_tbl',
-			'fuga_tbl',
-			'piyo_tbl'
+		$query->tableAsName = [
+			'hoge_tbl' => 'hoge_tbl',
+			'fuga_tbl' => 'fuga_tbl',
+			'piyo_tbl' => 'piyo_tbl'
 		];
 
 		$query->dependencyList = [
@@ -178,14 +164,14 @@ class TestQueryFactoryTrait extends TestHelper
 
 		$resultList = [
 			[
-				'COUNT(piyo_tbl.id)' => 100,
+				'_collect___COUNT(piyo_tbl.id)' => 100,
 				'hoge_tbl___id'      => '2',
 				'fuga_tbl___id'      => '22',
 				'fuga_tbl___name'    => 'AAA',
 				'piyo_tbl___name'    => 'aaa'
 			],
 			[
-				'COUNT(piyo_tbl.id)' => 200,
+				'_collect___COUNT(piyo_tbl.id)' => 200,
 				'hoge_tbl___id'      => '3',
 				'fuga_tbl___id'      => '33',
 				'fuga_tbl___name'    => 'BBB',
@@ -227,7 +213,7 @@ class TestQueryFactoryTrait extends TestHelper
 	public function unionArrayTest()
 	{
 		$query = Mock::m('System\Database\MySql\Query\SelectQuery');
-		$query->tableName = 'hoge_tbl';
+		$query->asSelf = 'hoge_tbl';
 
 		$dependencyList = [
 			'hoge_tbl' => ['fuga_tbl', 'piyo_tbl'],
@@ -252,29 +238,23 @@ class TestQueryFactoryTrait extends TestHelper
 		$this->compareValue($created, $query->unionArray($dependencyList, $classList));
 	}
 
-
-
 	/**
 	 * uniteArray
 	 */
 	public function uniteArrayTest()
 	{
 		$query = Mock::m('System\Database\MySql\Query\SelectQuery');
-		$query->tableName = 'hoge_tbl';
+		$query->asSelf = 'hoge_tbl';
 
-		$query->_setMethod('makeTableList')
-			->_setArgs()
-			->_setReturn()
-			->e();
 		$query->_setMethod('makeDependencyList')
 			->_setArgs()
 			->_setReturn()
 			->e();
 
-		$query->tableList = [
-			'hoge_tbl',
-			'fuga_tbl',
-			'piyo_tbl'
+		$query->tableAsName = [
+			'hoge_tbl' => 'hoge_tbl',
+			'fuga_tbl' => 'fuga_tbl',
+			'piyo_tbl' => 'piyo_tbl'
 		];
 
 		$query->dependencyList = [
