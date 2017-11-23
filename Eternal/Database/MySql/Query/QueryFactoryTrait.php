@@ -39,19 +39,19 @@ trait QueryFactoryTrait
 	 */
 	private function makeDependencyList()
 	{
-		foreach ($this->tableList as $table) {
-			$this->dependencyList[$table] = [];
+		foreach ($this->tableAsName as $as => $table) {
+			$this->dependencyList[$as] = [];
 			foreach ($this->formatedJoin as $join) {
 				//テーブル名が一致して尚且つ依存リストに無いもの
-				if ($table === $join['on'][0]['a']['table']
+				if ($as === $join['on'][0]['a']['table']
 					&& !isset($this->dependencyList[$join['on'][0]['b']['table']])
 				) {
-					$this->dependencyList[$table][] = $join['on'][0]['b']['table'];
+					$this->dependencyList[$as][] = $join['on'][0]['b']['table'];
 				}
-				if ($table === $join['on'][0]['b']['table']
+				if ($as === $join['on'][0]['b']['table']
 					&& !isset($this->dependencyList[$join['on'][0]['a']['table']])
 				) {
-					$this->dependencyList[$table][] = $join['on'][0]['a']['table'];
+					$this->dependencyList[$as][] = $join['on'][0]['a']['table'];
 				}
 			}
 		}
@@ -89,7 +89,7 @@ trait QueryFactoryTrait
 			return $this->union($dependencyList, $entityList, $createdList);
 		}
 
-		return $createdList[$this->tableName];
+		return $createdList[$this->asSelf];
 	}
 
 	/**
@@ -110,30 +110,33 @@ trait QueryFactoryTrait
 
 		$findList = [];
 		foreach ($resultList as $result) {
-			$array      = [];
-			$otherArray = [];
+			$array = [];
 			//テーブルとカラムの配列を作る
-			foreach ($result as $key => $r) {
-				if (false !== strpos($key, '___')) {
-					$list = explode('___', $key);
-					$array[$list[0]][$list[1]] = $r;
-				} else {
-					$otherArray[$key] = $r;
+			foreach ($result as $key => $value) {
+				$list = explode('___', $key);
+				if ('_collect' !== $list[0] && false !== strpos($list[1], '.')) {
+					$list[1] = ltrim(strstr($list[1], '.'), '.');
 				}
+				$array[$list[0]][$list[1]] = $value;
 			}
 
 			//SELECTしていないエンティティは生成されないので、初期値として生成する
-			foreach ($this->tableList as $table) {
-				if (!isset($array[$table])) {
-					$array[$table] = [];
+			foreach ($this->tableAsName as $as => $table) {
+				if (!isset($array[$as])) {
+					$array[$as] = [];
 				}
 			}
 
 			$entityList = [];
 			//実クラスからエンティティを生成する
 			foreach ($array as $table => $propertyList) {
-				$model = $this->container->getByTable($table);
-				$maked = $model::make($propertyList);
+				if ('_collect' !== $table) {
+					$model = $this->container->getByTable($this->tableAsName[$table]);
+					$maked = $model::make($propertyList);
+				} else {
+					$maked = new Collect($propertyList);
+				}
+
 				//AS句と同じ文字列で変数を取得できるようにする
 				foreach ($this->propertyAsName as $as => $list) {
 					if ($table === $list['table']) {
@@ -158,8 +161,8 @@ trait QueryFactoryTrait
 				}
 			}
 
-			if (!empty($otherArray)) {
-				$find->Collect = new Collect($otherArray);
+			if (true === array_key_exists('_collect', $entityList)) {
+				$find->Collect = $entityList['_collect'];
 			}
 
 			if (is_null($keyName)) {
@@ -192,6 +195,7 @@ trait QueryFactoryTrait
 					if (!isset($createdList[$d])) {
 						continue 2;
 					}
+
 					$myKey = key($classList[$table]);
 					$key   = key($classList[$d]);
 					$classList[$table][$myKey][$key] = $classList[$d][$key];
@@ -206,7 +210,7 @@ trait QueryFactoryTrait
 			return $this->unionArray($dependencyList, $classList, $createdList);
 		}
 
-		return $createdList[$this->tableName];
+		return $createdList[$this->asSelf];
 	}
 
 	/**
@@ -228,33 +232,32 @@ trait QueryFactoryTrait
 		$findList = [];
 		foreach ($resultList as $result) {
 			$array      = [];
-			$otherArray = [];
 			//テーブルとカラムの配列を作る
-			foreach ($result as $key => $r) {
-				if (false !== strpos($key, '___')) {
-					$list = explode('___', $key);
-					if (1 === preg_match('/^POINT\((.+)\ (.+)\)$/', $r, $match)) {
-						$r = [
-							'Point' => [
-								'lng' => $match[1],
-								'lat' => $match[2]
-							]
-						];
-					}
-					$array[$list[0]][$list[1]] = $r;
-				} else {
-					$otherArray[$key] = $r;
+			foreach ($result as $key => $value) {
+				$list = explode('___', $key);
+				if (1 === preg_match('/^POINT\((.+)\ (.+)\)$/', $value, $match)) {
+					$value = [
+						'Point' => [
+							'lng' => $match[1],
+							'lat' => $match[2]
+						]
+					];
 				}
+
+				if ('_collect' !== $list[0] && false !== strpos($list[1], '.')) {
+					$list[1] = ltrim(strstr($list[1], '.'), '.');
+				}
+
+				$array[$list[0]][$list[1]] = $value;
 			}
 
 			//SELECTしていないエンティティは生成されないので、初期値として生成する
-			foreach ($this->tableList as $table) {
-				if (!isset($array[$table])) {
-					$array[$table] = [];
+			foreach ($this->tableAsName as $as => $table) {
+				if (!isset($array[$as])) {
+					$array[$as] = [];
 				}
 			}
 
-			$entityList = [];
 			//実クラスからエンティティを生成する
 			foreach ($array as $table => $propertyList) {
 				$className = StringOperator::tableToClassName($table);
@@ -280,8 +283,8 @@ trait QueryFactoryTrait
 				}
 			}
 
-			if (!empty($otherArray)) {
-				$find[key($find)]['Collect'] = $otherArray;
+			if (true === array_key_exists('_collect', $classList)) {
+				$find[key($find)]['Collect'] = $classList['_collect'];
 			}
 
 			if (is_null($keyName)) {

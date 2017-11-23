@@ -14,6 +14,11 @@ class Collect
 	private $properties = []; 
 
 	/**
+	 * @var string[]
+	 */
+	private $extendProperty = [];
+
+	/**
 	 * コンストラクタ
 	 *
 	 * @param string[] $properties
@@ -32,11 +37,47 @@ class Collect
 	 * @param string $name
 	 * @param string $arguments
 	 */
-	public function __call($name, $arguments)
+	public function __call($name, array $arguments)
 	{
-		if (isset($this->properties[$name])) {
-			return $this->properties[$name];
+		if (isset($this->extendProperty[$name])) {
+			$property = $this->extendProperty[$name];
+			return $this->autoConvert($this->properties[$property]);
 		}
+
+		if (isset($this->properties[$name])) {
+			return $this->autoConvert($this->properties[$name]);
+		}
+
 		return null;
+	}
+
+	/**
+	 * 返す値の型を自動で判別する
+	 *
+	 * @param  string $value
+	 * @return mixed
+	 */
+	private function autoConvert($value)
+	{
+		if (1 === preg_match('/^-?[0-9]+$/', $value)) {
+			return (int)$value;
+		}
+
+		if (1 === preg_match('/^-?[0-9]+\.{1}[0-9]+$/', $value)) {
+			return (float)$value;
+		}
+
+		return $value;
+	}
+
+	/**
+	 * プロパティの別名をセットする
+	 *
+	 * @param string $original
+	 * @param string $as
+	 */
+	public function setExtendProperty($original, $as)
+	{
+		$this->extendProperty[$as] = $original;
 	}
 }

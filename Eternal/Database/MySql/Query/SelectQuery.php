@@ -22,6 +22,11 @@ class SelectQuery extends BaseQuery
 	/**
 	 * @var string
 	 */
+	private $asSelf;
+
+	/**
+	 * @var string
+	 */
 	private $from = [];
 
 	/**
@@ -90,6 +95,7 @@ class SelectQuery extends BaseQuery
 	public function select(array $argList, $asName = null)
 	{
 		if (!is_null($asName)) {
+			$this->asSelf = $asName;
 			$this->tableAsName[$asName] = $this->tableName;
 		}
 
@@ -104,10 +110,10 @@ class SelectQuery extends BaseQuery
 			}
 
 			if ($str instanceof SelectQuery) {
-				$table  = null;
+				$table  = '_collect';
 				$column = $str->isSubQuery();
 			} elseif (false !== strpos($str, '(')) {
-				$table  = null;
+				$table  = '_collect';
 				$column = $str;
 			} else {
 				if (false !== strpos($str, '.')) {
@@ -155,17 +161,10 @@ class SelectQuery extends BaseQuery
 	 */
 	public function join(array $join, array $onList)
 	{
-		if (is_int(key($join))) {
-			$as    = null;
-			$table = current($join);
-		} else {
-			$as    = key($join);
-			$table = current($join);
-		}
+		$as    = is_int(key($join)) ? current($join) : key($join);
+		$table = current($join);
 
-		if (!is_null($as)) {
-			$this->tableAsName[$as] = $table;
-		}
+		$this->tableAsName[$as] = $table;
 
 		$on = [];
 		foreach ($onList as $left => $right) {
@@ -244,6 +243,10 @@ class SelectQuery extends BaseQuery
 	 */
 	private function getSelectLine()
 	{
+		if (is_null($this->asSelf)) {
+			$this->tableAsName = array_merge([$this->tableName => $this->tableName], $this->tableAsName);
+		}
+
 		$columnList = [];
 		if (empty($this->select)) {
 			$useTableList = [$this->tableName];
@@ -251,8 +254,11 @@ class SelectQuery extends BaseQuery
 				$useTableList[] = $join['join']['table'];
 			}
 
+			$tableAsName = $this->tableAsName;
 			foreach ($useTableList as $useTable) {
-				$useModel = $this->container->getByTable($useTable);
+				$useAsName    = key($tableAsName);
+				array_shift($tableAsName);
+				$useModel     = $this->container->getByTable($useTable);
 				$propertyList = (new \ReflectionClass($useModel))->getProperties();
 				foreach ($propertyList as $property) {
 					if (is_null($type = StringOperator::getDocCommentByModelProperty($property->getDocComment()))) {
@@ -261,9 +267,10 @@ class SelectQuery extends BaseQuery
 
 					$as = null;
 					if (false === $this->isSubQuery) {
-						$as = sprintf('AS %s___%s', $useModel::getTableName(), $property->name);
+						$as = sprintf('AS %s___%s', $useAsName, $property->name);
 					}
-					$column = sprintf('%s.%s', $useModel::getTableName(), $property->name);
+
+					$column = sprintf('%s.%s', $useAsName, $property->name);
 					$columnList[] = 'Point' === $type ? sprintf('ASTEXT(%s) %s', $column, $as) : sprintf('%s %s', $column, $as);
 				}
 			}
@@ -274,49 +281,24 @@ class SelectQuery extends BaseQuery
 					$select['column'] = sprintf('(%s)', $select['column']->getBeforeQuery());
 				}
 
-				//SQL関数ではない場合
-				if (!is_null($select['table'])) {
-					//テーブル名に別名がついているものをすべて本来の名前に直す
-					foreach ($this->tableAsName as $as => $original) {
-						if ($select['table'] === $as) {
-							$select['table'] = $original;
-							break;
-						}
-					}
 
-					if (!is_null($select['as'])) {
-						//元々のAS句を保持しておく
-						$this->propertyAsName[$select['as']] = [
-							'table'  => $select['table'],
-							'column' => $select['column']
-						];
-					}
-
-					//JOIN時に同名のカラムがあると区別できないので、AS句がない場合は生成する
-					if (false === $this->isSubQuery) {
-						$select['as'] = sprintf('AS %s___%s', $select['table'], $select['column']);
-					}
-					$columnList[] = sprintf('%s.%s %s', $select['table'], $select['column'], $select['as']);
-				} else {
-					foreach ($this->tableAsName as $as => $original) {
-						$condition        = sprintf('/([\,\ \(]{1})%s(\.{1})/i', $as);
-						$replace          = sprintf('$1%s$2', $original);
-						$select['column'] = preg_replace($condition, $replace, $select['column']);
-					}
-
-					if (is_null($select['as'])) {
-						$select['as'] = $this->select[$i]['column'];
-						$columnList[] = $select['column'];
-					} else {
-						$columnList[] = sprintf('%s AS %s', $select['column'], $select['as']);
-					}
-
+				if (!is_null($select['as'])) {
 					//元々のAS句を保持しておく
 					$this->propertyAsName[$select['as']] = [
-						'table'  => '_collect',
+						'table'  => $select['table'],
 						'column' => $select['column']
 					];
 				}
+
+				if ('_collect' !== $select['table']) {
+					$select['column'] = sprintf('%s.%s', $select['table'], $select['column']);
+				}
+
+				if (false === $this->isSubQuery) {
+					$select['as'] = sprintf('AS "%s___%s"', $select['table'], $select['column']);
+				}
+
+				$columnList[] = sprintf('%s %s', $select['column'], $select['as']);
 			}
 		}
 
@@ -331,7 +313,10 @@ class SelectQuery extends BaseQuery
 	private function getFromLine()
 	{
 		if (empty($this->from)) {
-			return $this->tableName;
+			if (is_null($this->asSelf)) {
+				$this->asSelf = $this->tableName;
+			}
+			return sprintf('%s AS %s', $this->tableName, $this->asSelf);
 		}
 		$this->placeholder = array_merge($this->placeholder, $this->from['from']->getPlaceholder());
 		return  sprintf('(%s) AS %s', $this->from['from']->getBeforeQuery(), $this->from['as']);
@@ -350,24 +335,18 @@ class SelectQuery extends BaseQuery
 
 		$array  = [];
 		foreach ($this->join as $i => $value) {
-			//内部的に元のテーブル名で解釈されるため、AS句は不要
-			$array[] = sprintf('LEFT JOIN %s %s', 
-				$value['join']['table'],
-				$this->getIndexHintLine($value['join']['table'])
-			);
+			$joinArray = [];
+			$joinArray[] = 'LEFT JOIN';
+			$joinArray[] = $value['join']['table'];
+			if (!is_null($value['join']['as'])) {
+				$joinArray[] = 'AS ' . $value['join']['as'];
+			}
+			$joinArray[] = $this->getIndexHintLine($value['join']['table']);
+
+			$array[] = implode($joinArray, ' ');
 
 			$onList = [];
 			foreach ($value['on'] as $key => $on) {
-				foreach ($this->tableAsName as $as => $original) {
-					if ($value['on'][$key]['a']['table'] === $as) {
-						$value['on'][$key]['a']['table'] = $original;
-					}
-
-					if ($value['on'][$key]['b']['table'] === $as) {
-						$value['on'][$key]['b']['table'] = $original;
-					}
-				}
-
 				$onList[] = empty($onList) ? 'ON' : 'AND';
 				$onList[] = sprintf('%s.%s = %s.%s',
 					$value['on'][$key]['a']['table'],
@@ -443,12 +422,6 @@ class SelectQuery extends BaseQuery
 			$this->getForUpdateLine(),
 			$this->getOffsetLine()
 		);
-
-		foreach ($this->tableAsName as $as => $table) {
-			$condition = sprintf('/(\ |\()?%s(\.{1})/i', $as);
-			$replace   = sprintf('$1%s$2', $table);
-			$query     = preg_replace($condition, $replace, $query);
-		}
 
 		return $query;
 	}
