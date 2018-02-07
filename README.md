@@ -129,8 +129,8 @@ use App\Image;
 
 class Hoge
 {
-	private $this->user;
-	private $this->image;
+	private $user;
+	private $image;
 
 	public function __construct(
 		User $user,
