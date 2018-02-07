@@ -140,8 +140,7 @@ class Hoge
 		$this->image = $image;
 	}
 
-	//実行されるメソッド
-	public function indexAction()
+	public function do()
 	{
 		$this->user->getName();
 	}
