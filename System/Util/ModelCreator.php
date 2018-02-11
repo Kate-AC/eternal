@@ -121,8 +121,12 @@ class ModelCreator
 	public function makeDirectory()
 	{
 		$path = MODEL_DIR;
-		mkdir($path);
 		$end  = count($this->explodedNamespaceList) - 1;
+
+		if (false === is_dir($path)) {
+			mkdir($path);
+		}
+
 		foreach ($this->explodedNamespaceList as $key => $string) {
 			$pattern = sprintf('/\/%s\//', $string);
 
