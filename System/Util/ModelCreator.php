@@ -313,7 +313,7 @@ EOD;
 	 */
 	public function existEntity()
 	{
-		return file_exists(sprintf('%s%s.php', SRC_DIR, implode('/', $this->explodedNamespaceList)));
+		return file_exists(sprintf('%s%s.php', PUBLIC_DIR, implode('/', $this->explodedNamespaceList)));
 	}
 
 	/**
@@ -340,7 +340,7 @@ class {$this->modelName} extends {$this->modelName}Skeleton
 {
 }
 EOD;
-		$path = sprintf('%s%s.php', SRC_DIR, implode('/', $this->explodedNamespaceList));
+		$path = sprintf('%s%s.php', PUBLIC_DIR, implode('/', $this->explodedNamespaceList));
 		return false !== file_put_contents($path, $entity) ? true : false;
 	}
 

@@ -6,13 +6,14 @@
 
 /* ディレクトリの設定 =================================================================== */
 
-define('PUBLIC_DIR',     '/var/www/html/');
-define('SRC_DIR',        PUBLIC_DIR . 'src/');
-define('APP_DIR',        PUBLIC_DIR . 'src/App/');
-define('FRAMEWORK_DIR',  PUBLIC_DIR . 'Eternal/');
-define('CONTROLLER_DIR', PUBLIC_DIR . 'src/App/Controller/');
-define('MODEL_DIR',      PUBLIC_DIR . 'src/App/Model/');
-define('TEMPLATE_DIR',   PUBLIC_DIR . 'template/');
+define('SOURCE_DIR',     __DIR__    . '/');
+define('FRAMEWORK_DIR',  SOURCE_DIR . 'System/');
+define('TEST_DIR',       SOURCE_DIR . 'Test/');
+define('PUBLIC_DIR',     SOURCE_DIR . 'public/');
+define('APP_DIR',        SOURCE_DIR . 'public/App/');
+define('CONTROLLER_DIR', SOURCE_DIR . 'public/App/Controller/');
+define('MODEL_DIR',      SOURCE_DIR . 'public/App/Model/');
+define('TEMPLATE_DIR',   SOURCE_DIR . 'public/template/');
 
 
 /* テンプレートの拡張子の設定 =========================================================== */
@@ -28,8 +29,8 @@ const FIRST_PROCESS_CLASS = 'App\FirstProcess';
 
 /* ログファイルの設定 =================================================================== */
 
-define('ACTION_LOG_FILE', PUBLIC_DIR . 'log/action');
-define('SYSTEM_ERROR_LOG_FILE', PUBLIC_DIR . 'log/system_error');
+define('ACTION_LOG_FILE',       SOURCE_DIR . 'log/action');
+define('SYSTEM_ERROR_LOG_FILE', SOURCE_DIR . 'log/system_error');
 
 
 /* MySQLの設定 ========================================================================== */
@@ -79,7 +80,7 @@ const MEMCACHE_PORT = 11211;
 
 //trueの場合は例外が発生した際に処理が停止します
 //falseの場合はNotFoundページが表示されます
-const USE_DEBUG_MODE = false;
+const USE_DEBUG_MODE = true;
 
 
 /* オートロード対象のディレクトリを指定 ================================================= */
@@ -88,7 +89,8 @@ function getAutoLoadDirs()
 {
 	return [
 		FRAMEWORK_DIR,
-		SRC_DIR
+		TEST_DIR,
+		PUBLIC_DIR
 	];
 }
 

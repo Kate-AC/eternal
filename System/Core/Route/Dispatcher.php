@@ -63,6 +63,7 @@ class Dispatcher
 				$firstProcess = $this->container->get(FIRST_PROCESS_CLASS);
 				$firstProcess->execute();
 			}
+
 			$nameSpace  = $this->request->getControllerNameSpace();
 			$controller = $this->container->get($nameSpace);
 

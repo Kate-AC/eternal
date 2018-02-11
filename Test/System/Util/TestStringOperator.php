@@ -57,9 +57,9 @@ class TestStringOperator extends TestHelper
 	 */
 	public function pathToNameSpaceTest()
 	{
-		$this->compareValue('App\Hoge', StringOperator::pathToNameSpace(APP_DIR . 'Hoge.php'), 'App');
-		$this->compareValue('System\Hoge', StringOperator::pathToNameSpace(FRAMEWORK_DIR . 'Hoge.php'), 'System');
-		$this->compareValue('Test\System\Hoge', StringOperator::pathToNameSpace(FRAMEWORK_DIR . 'Test/Eternal/Hoge.php'), 'Test');
+		$this->compareValue('App\Hoge', StringOperator::pathToNameSpace(PUBLIC_DIR . 'App/Hoge.php'), 'App');
+		$this->compareValue('System\Hoge', StringOperator::pathToNameSpace(SOURCE_DIR . 'System/Hoge.php'), 'System');
+		$this->compareValue('Test\System\Hoge', StringOperator::pathToNameSpace(SOURCE_DIR . 'Test/System/Hoge.php'), 'Test');
 	}
 
 	/**
@@ -67,9 +67,9 @@ class TestStringOperator extends TestHelper
 	 */
 	public function nameSpaceToPathTest()
 	{
-		$this->compareValue(APP_DIR . 'Hoge.php', StringOperator::nameSpaceToPath('App\Hoge'), 'App');
-		$this->compareValue(FRAMEWORK_DIR . 'Hoge.php', StringOperator::nameSpaceToPath('System\Hoge'), 'System');
-		$this->compareValue(FRAMEWORK_DIR . 'Test/Eternal/Hoge.php', StringOperator::nameSpaceToPath('Test\System\Hoge'), 'Test');
+		$this->compareValue(PUBLIC_DIR . 'App/Hoge.php', StringOperator::nameSpaceToPath('App\Hoge'), 'App');
+		$this->compareValue(SOURCE_DIR . 'System/Hoge.php', StringOperator::nameSpaceToPath('System\Hoge'), 'System');
+		$this->compareValue(SOURCE_DIR . 'Test/System/Hoge.php', StringOperator::nameSpaceToPath('Test\System\Hoge'), 'Test');
 	}
 
 	/**

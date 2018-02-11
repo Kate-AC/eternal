@@ -83,17 +83,12 @@ class StringOperator
 	 */
 	public static function pathToNameSpace($filePath)
 	{
-		if (1 === preg_match('/^.+\/src\/.+$/', $filePath)) {
-			$nameSpace = preg_replace('/(^.+\/)src\/(.+$)/', '$1$2', $filePath);
-		} else if (1 === preg_match('/^.+\/Eternal\/.+$/', $filePath)) {
-			if (1 === preg_match('/^.+\/Test\/.+$/', $filePath)) {
-				$nameSpace = preg_replace('/(^.+\/)Eternal\/Test\/Eternal(\/.+$)/', '$1Test\System$2', $filePath);
-			} else {
-				$nameSpace = preg_replace('/(^.+\/)Eternal(\/.+$)/', '$1System$2', $filePath);
-			}
+		if (0 === strpos($filePath, PUBLIC_DIR)) {
+			$nameSpace = str_replace(['.php', PUBLIC_DIR], '', $filePath);
+		} else {
+			$nameSpace = str_replace(['.php', SOURCE_DIR], '', $filePath);
 		}
 
-		$nameSpace = str_replace(['.php', PUBLIC_DIR], '', $nameSpace);
 		return str_replace('/', '\\', $nameSpace);
 	}
 
@@ -107,18 +102,17 @@ class StringOperator
 	{
 		$nameSpace = str_replace('\\', '/', $nameSpace) . '.php';
 
-		if (1 === preg_match('/^System\/.+$/', $nameSpace)) {
-			$nameSpace = preg_replace('/^System(\/.+$)/', 'Eternal$1', $nameSpace);
-			return PUBLIC_DIR . $nameSpace;
+		$system = str_replace(SOURCE_DIR, '', FRAMEWORK_DIR);
+		if (0 === strpos($nameSpace, $system)) {
+			return SOURCE_DIR . $nameSpace;
 		}
 
-		if (1 === preg_match('/^Test\/.+$/', $nameSpace)) {
-			$nameSpace = preg_replace('/^Test(\/.+$)/', 'Eternal/Test$1', $nameSpace);
-			$nameSpace = preg_replace('/(^.+\/)System(.+$)/', '$1Eternal$2', $nameSpace);
-			return PUBLIC_DIR . $nameSpace;
+		$test = str_replace(SOURCE_DIR, '', TEST_DIR);
+		if (0 === strpos($nameSpace, $test)) {
+			return SOURCE_DIR . $nameSpace;
 		}
 
-		return SRC_DIR . $nameSpace;
+		return PUBLIC_DIR . $nameSpace;
 	}
 
 	/**

@@ -18,7 +18,7 @@ class TestAutoUseModule extends TestHelper
 	public function runTest()
 	{
 		$autoUseModule = AutoUseModule::get();
-		$path = SRC_DIR . 'HogeFuga.php';
+		$path = PUBLIC_DIR . 'HogeFuga.php';
 		$data = <<<EOD
 <?php
 

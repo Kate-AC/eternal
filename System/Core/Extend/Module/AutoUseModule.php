@@ -22,7 +22,7 @@ class AutoUseModule extends AbstractModule
 	 */
 	public function run($path, $data)
 	{
-		if (false !== strpos($path, SRC_DIR)) {
+		if (false !== strpos($path, PUBLIC_DIR)) {
 			$autoUseList = [
 				'use System\\Type\\Primitive\\Boolean;',
 				'use System\\Type\\Primitive\\Float;',

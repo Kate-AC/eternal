@@ -1,14 +1,14 @@
 help:
-	cat ./Eternal/NotClass/Script/help
+	cat ./System/NotClass/Script/help
 
 model:
-	gcc -o ./Eternal/NotClass/Script/model_creator.out \
-	./Eternal/NotClass/Script/model_creator.c
-	./Eternal/NotClass/Script/model_creator.out
+	gcc -o ./System/NotClass/Script/model_creator.out \
+	./System/NotClass/Script/model_creator.c
+	./System/NotClass/Script/model_creator.out
 
 init:
-	gcc -o ./Eternal/NotClass/Script/model_creator.out \
-	./Eternal/NotClass/Script/model_creator.c
+	gcc -o ./System/NotClass/Script/model_creator.out \
+	./System/NotClass/Script/model_creator.c
 
 test:
-	cd Eternal/Test; php ./TestRunner.php
+	cd Test; php TestRunner.php

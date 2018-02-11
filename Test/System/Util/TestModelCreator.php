@@ -87,7 +87,7 @@ class TestModelCreator extends TestHelper
 		$proprety = new \ReflectionProperty($modelCreator, 'explodedNamespaceList');
 		$proprety->setAccessible(true);
 
-		$namespace = str_replace(SRC_DIR, '', MODEL_DIR) . 'Hoge/Fuga';
+		$namespace = str_replace(PUBLIC_DIR, '', MODEL_DIR) . 'Hoge/Fuga';
 		$explodedNamespaceList = explode('/', $namespace);
 		$proprety->setValue($modelCreator, $explodedNamespaceList);
 

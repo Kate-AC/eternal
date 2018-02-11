@@ -1,8 +1,4 @@
 RewriteEngine On
 
-<Files ~ "^(makefile|.*\.log|Script)$">
-	deny from all
-</Files>
-
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ index.php [QSA,L]
