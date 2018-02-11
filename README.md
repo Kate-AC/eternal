@@ -62,10 +62,6 @@ EternalはPHP5.6以上、MySQL5.7以上での使用を想定したフレーム�
     - [Resource] リソース関連の型に関するファイルがあるディレクトリ  
       __File.php__ 画像以外のファイル型  
       __Image.php__ 画像ファイル型  
-  - [Test] フレームワークのテストに関するファイルがあるディレクトリ  
-    __Mock.php__ クラスのモックを作成するクラス  
-    __TestHelper.php__ 実行結果を判定するクラス  
-    __TestRunner.php__ テストを一括で実行するクラス  
   - [NotClass] クラスではないメソッドのみが記述されたファイルがあるディレクトリ  
     __CallPrimitiveFunction.php__ Primitive型を呼び出せるグローバル関数  
     __DebugFunction.php__         デバッグ時に使用可能なグローバル関数  
@@ -81,16 +77,32 @@ EternalはPHP5.6以上、MySQL5.7以上での使用を想定したフレーム�
 
   __makefile__ makeコマンドが記述されたファイル  
   __config.php__ フレームワークの設定を記述するファイル  
-  __index.php__ フレームワークの起点となるファイル  
   __use.php__ フレームワークが動作するために最低限必要なrequire文が書かれている  
-  - [log] ログが書き出されるディレクトリ
-  - [src] ソースディレクトリ
+  - [log] ログが書き出されるディレクトリ  
+  - [public] 公開用ディレクトリ  
+    __index.php__ フレームワークの起点となるファイル  
     - [App] アプリケーションディレクトリ(名前空間と連動している)  
       __FirstProcess.php__ 全てのコントローラより先に実行されるクラス  
       - [Controller] コントローラを入れるディレクトリ  
         __IndexController.php__ デフォルトの初期コントローラ  
       - [Model] モデルを入れるディレクトリ  
-  - [template] ビューファイルを入れるディレクトリ  
+    - [template] ビューファイルを入れるディレクトリ  
+- [Test] フレームワークのテストに関するファイルがあるディレクトリ  
+  __Mock.php__ クラスのモックを作成するクラス  
+  __TestHelper.php__ 実行結果を判定するクラス  
+  __TestRunner.php__ テストを一括で実行するクラス  
+
+## ■ 設置方法
+  
+適当なディレクトリにcloneします。  
+その後、apache等で設定されている公開用ディレクトリに、  
+publicディレクトリのシンボリックリンクを張ります。  
+  
+> cd /home/hogefuga  
+> git clone https://github.com/Kate-AC/Eternal.git  
+> ln -s /home/hogefuga/Eternal/public /var/www/html  
+  
+これでルートURLにアクセスして、Hello World!と表示されていれば完了です。  
   
 ## ■ config.phpの設定方法
 
