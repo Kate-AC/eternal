@@ -80,7 +80,7 @@ const MEMCACHE_PORT = 11211;
 
 //trueの場合は例外が発生した際に処理が停止します
 //falseの場合はNotFoundページが表示されます
-const USE_DEBUG_MODE = true;
+const USE_DEBUG_MODE = false;
 
 
 /* オートロード対象のディレクトリを指定 ================================================= */
