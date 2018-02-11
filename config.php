@@ -32,6 +32,7 @@ const FIRST_PROCESS_CLASS = 'App\FirstProcess';
 define('ACTION_LOG_FILE',       SOURCE_DIR . 'log/action');
 define('SYSTEM_ERROR_LOG_FILE', SOURCE_DIR . 'log/system_error');
 
+const USE_SYSTEM_ERROR_LOG_FILE = false;
 
 /* MySQLの設定 ========================================================================== */
 

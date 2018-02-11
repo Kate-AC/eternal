@@ -15,7 +15,7 @@ void main()
 
 	char namespace[MAX_NAMESPACE] = {};
 	char buffer[MAX_BUFFER] = {};
-	char command[] = "php ./Eternal/NotClass/Script/ModelCreatorScript.php  ";
+	char command[] = "php ./System/NotClass/Script/ModelCreatorScript.php  ";
 	int i = 0;
 	int j = 0;
 

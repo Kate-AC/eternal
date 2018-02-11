@@ -121,6 +121,7 @@ class ModelCreator
 	public function makeDirectory()
 	{
 		$path = MODEL_DIR;
+		mkdir($path);
 		$end  = count($this->explodedNamespaceList) - 1;
 		foreach ($this->explodedNamespaceList as $key => $string) {
 			$pattern = sprintf('/\/%s\//', $string);
@@ -403,7 +404,7 @@ class {$this->modelName}Skeleton extends BaseModel
 	}	{$this->getGetter()}
 }
 EOD;
-		$path = sprintf('%s%sSkeleton.php', SRC_DIR, implode('/', $this->explodedNamespaceList));
+		$path = sprintf('%s%sSkeleton.php', PUBLIC_DIR, implode('/', $this->explodedNamespaceList));
 		return false !== file_put_contents($path, $skeleton) ? true : false;
 	}
 }

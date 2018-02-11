@@ -80,7 +80,10 @@ class Dispatcher
 			$controller->_checkNeedTemplate();
 			$controller->_responseJsonWhenUseJsonResponse();
 		} catch (\Exception $e) {
-			$this->systemErrorLogger->write($e->getMessage());
+			if (true === USE_SYSTEM_ERROR_LOG_FILE) {
+				$this->systemErrorLogger->write($e->getMessage());
+			}
+
 			if (true === USE_DEBUG_MODE) {
 				var_dump($e->getMessage());
 				exit;
