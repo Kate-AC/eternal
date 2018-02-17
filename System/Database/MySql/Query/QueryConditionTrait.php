@@ -96,7 +96,7 @@ trait QueryConditionTrait
 				if (is_array($condition['value'])) {
 					$in = [];
 					foreach ($condition['value'] as $v) {
-						$this->placeholder[] = is_string($v) ? sprintf('"%s"', $v) : $v;
+						$this->placeholder[] = $v;
 						$in[] = '?';
 					}
 					$list[] = sprintf('%s %s (%s)', $condition['column'], $condition['comparison'], implode(', ', $in)); 
@@ -109,7 +109,7 @@ trait QueryConditionTrait
 						); 
 						$this->placeholder = array_merge($this->placeholder, $condition['value']->getPlaceholder());
 					} else {
-						$this->placeholder[] = is_string($condition['value']) ? sprintf('"%s"', $condition['value']) : $condition['value'];
+						$this->placeholder[] = $condition['value'];
 						$list[] = sprintf('%s %s ?', $condition['column'], $condition['comparison']); 
 					}
 				}
