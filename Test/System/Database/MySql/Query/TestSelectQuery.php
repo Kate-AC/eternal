@@ -140,13 +140,17 @@ class TestSelectQuery extends TestHelper
 		$property = new \ReflectionProperty($selectQuery, 'orderBy');
 		$property->setAccessible(true);
 
-		$selectQuery->orderBy('hoge');
-		$selectQuery->orderBy('fuga');
-		$this->compareValue(['hoge', 'fuga'], $property->getValue($selectQuery));
+		$selectQuery->orderBy('hoge', 'DESC');
+		$selectQuery->orderBy('fuga', 'ASC');
+		$orderByArray = [
+			['column' => 'hoge', 'type' => 'DESC'],
+			['column' => 'fuga', 'type' => 'ASC']
+		];
+		$this->compareValue($orderByArray, $property->getValue($selectQuery));
 
 		$method = new \ReflectionMethod($selectQuery, 'getOrderByLine');
 		$method->setAccessible(true);
-		$this->compareValue('ORDER BY hoge, fuga', $method->invoke($selectQuery), 'get');
+		$this->compareValue('ORDER BY hoge DESC, fuga ASC', $method->invoke($selectQuery), 'get');
 
 		$property->setValue($selectQuery, []);
 		$this->compareValue(null, $method->invoke($selectQuery), 'get時に値がない場合');

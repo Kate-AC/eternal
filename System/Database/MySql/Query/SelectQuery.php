@@ -60,6 +60,7 @@ class SelectQuery extends BaseQuery
 	private $limit;
 
 	/**
+	 * @param string $orderBy
 	 * @var string[]
 	 */
 	private $tableAsName = [];
@@ -203,12 +204,16 @@ class SelectQuery extends BaseQuery
 	/**
 	 * ORDER BY
 	 *
-	 * @param string $orderBy
+	 * @param string $column
+	 * @param string $type
 	 * @return SelectQuery
 	 */
-	public function orderBy($orderBy)
+	public function orderBy($column, $type)
 	{
-		$this->orderBy[] = $orderBy;
+		$this->orderBy[] = [
+			'column' => $column,
+			'type'   => $type
+		];
 		return $this;
 	}
 
@@ -379,7 +384,16 @@ class SelectQuery extends BaseQuery
 	 */
 	private function getOrderByLine()
 	{
-		return !empty($this->orderBy) ? sprintf('ORDER BY %s', implode(', ', $this->orderBy)) : null;
+		$orderByArray = [];
+		foreach ($this->orderBy as $i => $array) {
+			if (isset($this->propertyAsName[$array['column']])) {
+				$column = $this->propertyAsName[$array['column']];
+				$array['column'] = sprintf('"%s___%s"', $column['table'], $column['column']);
+			}
+			$orderByArray[] = sprintf('%s %s', $array['column'], $array['type']);
+		}
+
+		return !empty($orderByArray) ? sprintf('ORDER BY %s', implode(', ', $orderByArray)) : null;
 	}
 
 	/**
