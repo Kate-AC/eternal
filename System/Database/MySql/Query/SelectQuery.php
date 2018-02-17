@@ -60,7 +60,6 @@ class SelectQuery extends BaseQuery
 	private $limit;
 
 	/**
-	 * @param string $orderBy
 	 * @var string[]
 	 */
 	private $tableAsName = [];
