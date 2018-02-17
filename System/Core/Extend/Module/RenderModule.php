@@ -57,6 +57,8 @@ class RenderModule extends AbstractModule
 				}
 
 				$value = preg_replace('/escape\(([^\(\)]*)\)/', 'htmlspecialchars($1, ENT_QUOTES, "UTF-8")', $value);
+				$value = preg_replace('/appendView\((\'|\")([^\(\)]*)(\'|\")\)/', sprintf('include("extend://%s$2")', TEMPLATE_DIR), $value);
+				// preg_match('/(include|include_once|require|require_once)\((\'|\")([^\(\)]*)(\'|\")\)/', $value, $match)
 
 				//コロンやセミコロンがあるものは条件式なのでechoしない
 				if (1 === preg_match('/^.*(\;|\:)\ *$/', $value)) {
