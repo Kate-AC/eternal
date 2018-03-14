@@ -200,6 +200,7 @@ class BaseController
 	{
 		$url = sprintf('Location: //%s%s', $this->request->server('SERVER_NAME'), $to);
 		header($url);
+		exit;
 	}
 
 	/**
