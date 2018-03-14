@@ -201,6 +201,7 @@ class Request
 	public function getUri()
 	{
 		$uri = ltrim($this->server['REQUEST_URI'], '/');
+		$uri = str_replace(CURRENT_DIR, '', $uri);
 
 		if (false !== strstr($uri, '?', true)) {
 			$uri = strstr($uri, '?', true);

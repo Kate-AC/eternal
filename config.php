@@ -6,6 +6,8 @@
 
 /* ディレクトリの設定 =================================================================== */
 
+
+define('CURRENT_DIR',    '/');
 define('SOURCE_DIR',     __DIR__    . '/');
 define('FRAMEWORK_DIR',  SOURCE_DIR . 'System/');
 define('TEST_DIR',       SOURCE_DIR . 'Test/');
@@ -43,12 +45,12 @@ function getConnectionList()
 		'master' => [
 			'use'      => true,
 			'host'     => 'localhost',
-			'database' => 'vega',
+			'database' => 'monday',
 			'user'     => 'root',
 			'password' => 'root'
 		],
 		'slave1' => [
-			'use'      => true,
+			'use'      => false,
 			'host'     => 'localhost',
 			'database' => 'vega',
 			'user'     => 'slave',
@@ -81,7 +83,7 @@ const MEMCACHE_PORT = 11211;
 
 //trueの場合は例外が発生した際に処理が停止します
 //falseの場合はNotFoundページが表示されます
-const USE_DEBUG_MODE = false;
+const USE_DEBUG_MODE = true;
 
 
 /* オートロード対象のディレクトリを指定 ================================================= */

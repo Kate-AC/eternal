@@ -155,12 +155,16 @@ class SelectQuery extends BaseQuery
 	/**
 	 * JOIN
 	 *
-	 * @param string[] $join [join先のテーブル => AS] or [join先のテーブル]
+	 * @param string   $join [join先のテーブル => AS] or [join先のテーブル]
 	 * @param string[] $on   [テーブル.カラム, テーブル.カラム]
 	 * @return SelectQuery
 	 */
-	public function join(array $join, array $onList)
+	public function join($join, array $onList)
 	{
+		if ($join instanceof SelectQuery) {
+			$join = $join->getBeforeQuery();
+		}
+
 		$as    = is_int(key($join)) ? current($join) : key($join);
 		$table = current($join);
 
@@ -271,7 +275,7 @@ class SelectQuery extends BaseQuery
 
 					$as = null;
 					if (false === $this->isSubQuery) {
-						$as = sprintf('AS %s___%s', $useAsName, $property->name);
+						$as = sprintf('AS `%s___%s`', $useAsName, $property->name);
 					}
 
 					$column = sprintf('%s.%s', $useAsName, $property->name);
@@ -299,7 +303,7 @@ class SelectQuery extends BaseQuery
 				}
 
 				if (false === $this->isSubQuery) {
-					$select['as'] = sprintf('AS "%s___%s"', $select['table'], $select['column']);
+					$select['as'] = sprintf('AS `%s___%s`', $select['table'], $select['column']);
 				}
 
 				$columnList[] = sprintf('%s %s', $select['column'], $select['as']);
@@ -341,7 +345,12 @@ class SelectQuery extends BaseQuery
 		foreach ($this->join as $i => $value) {
 			$joinArray = [];
 			$joinArray[] = 'LEFT JOIN';
-			$joinArray[] = $value['join']['table'];
+			if ($value['join']['table'] instanceof SelectQuery) {
+				$joinArray[] = sprintf('(%s)', $value['join']['table']->getBeforeQuery());
+			} else {
+				$joinArray[] = $value['join']['table'];
+			}
+
 			if (!is_null($value['join']['as'])) {
 				$joinArray[] = 'AS ' . $value['join']['as'];
 			}

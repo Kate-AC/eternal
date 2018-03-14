@@ -172,10 +172,9 @@ class BaseQuery
 	 */
 	protected function getIndexHintLine($tableName = null)
 	{
-		if (is_null($tableName) || !isset($this->indexHint[$tableName])) {
-			return null;
+		if (empty($this->indexHint) || is_null($tableName)) {
+			return;
 		}
-
 		switch ($this->indexHint[$tableName]['type']) {
 			case self::INDEX_USE:
 				$indexHint = 'USE INDEX';

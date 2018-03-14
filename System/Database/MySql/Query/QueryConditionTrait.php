@@ -93,6 +93,14 @@ trait QueryConditionTrait
 				$list[] = $condition['column']->get();
 				$this->placeholder = array_merge($this->placeholder, $condition['column']->getPlaceholder());
 			} else {
+				if (is_array($condition['column'])) {
+					$column = [];
+					foreach ($condition['column'] as $c) {
+						$column[] = $c;
+					}
+					$condition['column'] = sprintf('(%s)', implode(', ', $column));
+				}
+
 				if (is_array($condition['value'])) {
 					$in = [];
 					foreach ($condition['value'] as $v) {
