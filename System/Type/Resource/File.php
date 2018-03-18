@@ -61,6 +61,16 @@ class File
 	}
 
 	/**
+	 * URIを取得する
+	 *
+	 * @return int
+	 */
+	public function getUri()
+	{
+		return $this->uri;
+	}
+
+	/**
 	 * ファイルを保存する
 	 *
 	 * @param string $path
