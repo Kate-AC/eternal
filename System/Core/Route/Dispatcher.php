@@ -7,6 +7,7 @@
 namespace System\Core\Route;
 
 use System\Core\Extend\ExtendProtocol;
+use System\Core\Extend\Module\RenderModule;
 use System\Core\Di\Container;
 use System\Core\Route\Request;
 use System\Log\SystemErrorLogger;
@@ -88,7 +89,9 @@ class Dispatcher
 				var_dump($e->getMessage());
 				exit;
 			}
-			include(TEMPLATE_DIR . 'not_found.php');
+			$this->extendProtocol->setModule(RenderModule::get())->start();
+			include_once(sprintf('%s://%s', ExtendProtocol::PROTOCOL, TEMPLATE_DIR . 'not_found.php'));
+			$this->extendProtocol->end();
 		}
 	}
 }
