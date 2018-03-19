@@ -37,7 +37,8 @@ class AutoLoader
 	 */
 	public function autoLoad($nameSpace)
 	{
-		if (empty($allFilePathList = $this->filePathSearcher->getAllFilePathList())) {
+		$allFilePathList = $this->filePathSearcher->getAllFilePathList();
+		if (empty($allFilePathList)) {
 			$allFilePathList = $this->filePathSearcher->search();
 		}
 
