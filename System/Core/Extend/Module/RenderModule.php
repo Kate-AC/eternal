@@ -73,6 +73,6 @@ class RenderModule extends AbstractModule
 			$data = preg_replace('/\<\#\_\#\>/', $l, $data, 1);
 		}
 
-		return $data;
+		return preg_replace('/\ {2,}/', '', $data);
 	}
 }
