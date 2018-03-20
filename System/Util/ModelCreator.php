@@ -155,7 +155,7 @@ class ModelCreator
 
 		foreach ($resultList as $result) {
 			if ('PRI' === $result['Key']) {
-				$primaryKeyList[] = sprintf("'%s'", $result['Field']);
+				$this->primaryKeyList[] = sprintf("'%s'", $result['Field']);
 			}
 
 			$default = !is_null($result['Default']) ? $result['Default'] : 'null';
