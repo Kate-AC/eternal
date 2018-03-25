@@ -271,7 +271,9 @@ EOD;
 EOD;
 
 			if ('\DateTime' !== $columnInfo['type'] && 'null' !== $columnInfo['default']) {
-				$columnInfo['default'] = printf("'%s'", $columnInfo['default']);
+				if (1 !== preg_match('/^([1-9][0-9]*|[0-9]{1})$/', $columnInfo['default'])) {
+					$columnInfo['default'] = sprintf("'%s'", $columnInfo['default']);
+				}
 			}
 
 			if ("" === $columnInfo['default']) {
