@@ -4,7 +4,7 @@
  * クエリをフェッチするトレイト
  */
 
-namespace System\Database\MySql\Query;
+namespace System\Database\Query;
 
 use System\Exception\DatabaseException;
 

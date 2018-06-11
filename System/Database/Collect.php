@@ -4,7 +4,7 @@
  * SUMやCOUNT等の存在しないカラムをまとめるクラス
  */
 
-namespace System\Database\MySql;
+namespace System\Database;
 
 class Collect
 {

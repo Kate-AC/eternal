@@ -4,7 +4,7 @@
  * QueryFetchTraitのテスト
  */
 
-namespace Test\System\Database\MySql\Query;
+namespace Test\System\Database\Query;
 
 use System\Exception\DatabaseException;
 use Test\Mock;
@@ -20,7 +20,7 @@ class TestQueryFetchTrait extends TestHelper
 	 */
 	public function fetchAndFetchAsArrayAndFetchAllAndFetchAllAsArrayTest()
 	{
-		$query = Mock::m('System\Database\MySql\Query\SelectQuery');
+		$query = Mock::m('System\Database\Query\SelectQuery');
 		$query->_setMethod('create')
 			->_setArgs()
 			->_setReturn('query')
@@ -74,7 +74,7 @@ class TestQueryFetchTrait extends TestHelper
 	 */
 	public function fetchTestWhenNull()
 	{
-		$query = Mock::m('System\Database\MySql\Query\SelectQuery');
+		$query = Mock::m('System\Database\Query\SelectQuery');
 		$query->_setMethod('create')
 			->_setArgs()
 			->_setReturn('query')
@@ -101,7 +101,7 @@ class TestQueryFetchTrait extends TestHelper
 	 */
 	public function fetchAllByKeyAndFetchAllAsArrayByKeyTest()
 	{
-		$query = Mock::m('System\Database\MySql\Query\SelectQuery');
+		$query = Mock::m('System\Database\Query\SelectQuery');
 		$query->_setMethod('create')
 			->_setArgs()
 			->_setReturn('query')
@@ -157,7 +157,7 @@ class TestQueryFetchTrait extends TestHelper
 	 */
 	public function countTest()
 	{
-		$query = Mock::m('System\Database\MySql\Query\SelectQuery');
+		$query = Mock::m('System\Database\Query\SelectQuery');
 		$query->_setMethod('create')
 			->_setArgs()
 			->_setReturn('query')
@@ -182,7 +182,7 @@ class TestQueryFetchTrait extends TestHelper
 	 */
 	public function escapeTest()
 	{
-		$query = Mock::m('System\Database\MySql\Query\SelectQuery');
+		$query = Mock::m('System\Database\Query\SelectQuery');
 		$placeholder = ['hoge', 'fuga'];
 		$query->placeholder = $placeholder;
 
@@ -203,7 +203,7 @@ class TestQueryFetchTrait extends TestHelper
 			->_setReturn($prepare)
 			->e();
 
-		$connection = Mock::m('System\Database\MySql\Connection')
+		$connection = Mock::m('System\Database\Connection')
 			->_setMethod('getAuto')
 			->_setArgs()
 			->_setReturn($pdo)

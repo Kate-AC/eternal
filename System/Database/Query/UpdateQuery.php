@@ -4,7 +4,7 @@
  * UPDATEクエリ
  */
 
-namespace System\Database\MySql\Query;
+namespace System\Database\Query;
 
 use System\Exception\DatabaseException;
 use System\Util\StringOperator;
@@ -46,9 +46,9 @@ class UpdateQuery extends BaseQuery
 			if (is_null($arg)) {
 				$setList[] = sprintf('%s = NULL', $key);
 			} elseif ($arg instanceof \DateTime || $arg instanceof \DateTimeImmutable) {
-				$setList[] = sprintf('%s = "%s"', $key, $arg->format('Y-m-d H:i:s'));
+				$setList[] = sprintf("%s = '%s'", $key, $arg->format('Y-m-d H:i:s'));
 			} elseif (is_string($arg)) {
-				$setList[] = sprintf('%s = "%s"', $key, $arg);
+				$setList[] = sprintf("%s = '%s'", $key, $arg);
 			} else {
 				$setList[] = sprintf('%s = %s', $key, $arg);
 			}

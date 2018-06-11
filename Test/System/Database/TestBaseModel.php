@@ -4,14 +4,14 @@
  * BaseModelのテスト
  */
 
-namespace Test\System\Database\MySql;
+namespace Test\System\Database;
 
-use System\Database\MySql\TransactionFactory;
-use System\Database\MySql\Connection;
-use System\Database\MySql\Query\DeleteQuery;
-use System\Database\MySql\Query\InsertQuery;
-use System\Database\MySql\Query\SelectQuery;
-use System\Database\MySql\Query\UpdateQuery;
+use System\Database\TransactionFactory;
+use System\Database\Connection;
+use System\Database\Query\DeleteQuery;
+use System\Database\Query\InsertQuery;
+use System\Database\Query\SelectQuery;
+use System\Database\Query\UpdateQuery;
 use System\Core\Di\Container;
 use Test\Mock;
 use Test\Parse;
@@ -47,7 +47,7 @@ class TestBaseModel extends TestHelper
 	 */
 	public function __constructTest()
 	{
-		$this->compareInstance('System\Database\MySql\BaseModel', new TestModel($this->connection, $this->container));
+		$this->compareInstance('System\Database\BaseModel', new TestModel($this->connection, $this->container));
 	}
 
 	/**
@@ -149,7 +149,7 @@ class TestBaseModel extends TestHelper
 
 namespace Test;
 
-use System\Database\MySql\BaseModel;
+use System\Database\BaseModel;
 
 class TestModel extends BaseModel
 {

@@ -4,15 +4,15 @@
  * モデルのベース
  */
 
-namespace System\Database\MySql;
+namespace System\Database;
 
 use System\Core\Di\Container;
-use System\Database\MySql\Connection;
-use System\Database\MySql\Query\Condition;
-use System\Database\MySql\Query\DeleteQuery;
-use System\Database\MySql\Query\InsertQuery;
-use System\Database\MySql\Query\SelectQuery;
-use System\Database\MySql\Query\UpdateQuery;
+use System\Database\Connection;
+use System\Database\Query\Condition;
+use System\Database\Query\DeleteQuery;
+use System\Database\Query\InsertQuery;
+use System\Database\Query\SelectQuery;
+use System\Database\Query\UpdateQuery;
 use System\Exception\SystemException;
 use System\Util\StringOperator;
 

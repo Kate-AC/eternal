@@ -4,7 +4,7 @@
  * DELETEクエリ
  */
 
-namespace System\Database\MySql\Query;
+namespace System\Database\Query;
 
 use System\Exception\DatabaseException;
 use System\Util\StringOperator;
@@ -18,13 +18,11 @@ class DeleteQuery extends BaseQuery
 	 */
 	public function create()
 	{
-		$query = sprintf('%s DELETE FROM %s %s',
+		return sprintf('%s DELETE FROM %s %s',
 			$this->getExplainLine(),
 			$this->tableName,
 			$this->getConditionLine()
-	);
-
-		return $query;
+		);
 	}
 
 	/**

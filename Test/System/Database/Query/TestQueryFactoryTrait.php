@@ -4,9 +4,9 @@
  * QueryFactoryTraitのテスト
  */
 
-namespace Test\System\Database\MySql\Query;
+namespace Test\System\Database\Query;
 
-use System\Database\MySql\Collect;
+use System\Database\Collect;
 use System\Exception\DatabaseException;
 use Test\Mock;
 use Test\TestHelper;
@@ -20,7 +20,7 @@ class TestQueryFactoryTrait extends TestHelper
 	 */
 	public function makeDependencyListTest()
 	{
-		$reflection = new \ReflectionClass('System\Database\MySql\Query\SelectQuery');
+		$reflection = new \ReflectionClass('System\Database\Query\SelectQuery');
 		$instance   = $reflection->newInstanceWithoutConstructor();
 
 		$property = new \ReflectionProperty($instance, 'formatedJoin');
@@ -89,7 +89,7 @@ class TestQueryFactoryTrait extends TestHelper
 	 */
 	public function unionTest()
 	{
-		$query = Mock::m('System\Database\MySql\Query\SelectQuery');
+		$query = Mock::m('System\Database\Query\SelectQuery');
 		$query->asSelf = 'hoge_tbl';
 
 		$dependencyList = [
@@ -124,7 +124,7 @@ class TestQueryFactoryTrait extends TestHelper
 	 */
 	public function uniteTest()
 	{
-		$query = Mock::m('System\Database\MySql\Query\SelectQuery');
+		$query = Mock::m('System\Database\Query\SelectQuery');
 		$query->asSelf = 'hoge_tbl';
 
 		$query->_setMethod('makeDependencyList')
@@ -212,7 +212,7 @@ class TestQueryFactoryTrait extends TestHelper
 	 */
 	public function unionArrayTest()
 	{
-		$query = Mock::m('System\Database\MySql\Query\SelectQuery');
+		$query = Mock::m('System\Database\Query\SelectQuery');
 		$query->asSelf = 'hoge_tbl';
 
 		$dependencyList = [
@@ -243,7 +243,7 @@ class TestQueryFactoryTrait extends TestHelper
 	 */
 	public function uniteArrayTest()
 	{
-		$query = Mock::m('System\Database\MySql\Query\SelectQuery');
+		$query = Mock::m('System\Database\Query\SelectQuery');
 		$query->asSelf = 'hoge_tbl';
 
 		$query->_setMethod('makeDependencyList')
@@ -316,7 +316,7 @@ class TestQueryFactoryTrait extends TestHelper
 
 namespace Test\Query;
 
-use System\Database\MySql\BaseModel;
+use System\Database\BaseModel;
 
 class TestModel extends BaseModel
 {

@@ -4,9 +4,9 @@
  * INSERTクエリテスト
  */
 
-namespace Test\System\Database\MySql\Query;
+namespace Test\System\Database\Query;
 
-use System\Database\MySql\Query\InsertQuery;
+use System\Database\Query\InsertQuery;
 use System\Exception\DatabaseException;
 use Test\Mock;
 use Test\TestHelper;
@@ -20,7 +20,7 @@ class TestInsertQuery extends TestHelper
 	 */
 	public function createTest()
 	{
-		$insertQuery = Mock::m('System\Database\MySql\Query\InsertQuery');
+		$insertQuery = Mock::m('System\Database\Query\InsertQuery');
 		$insertQuery
 			->_setMethod('getExplainLine')
 			->_setArgs()
@@ -39,7 +39,7 @@ class TestInsertQuery extends TestHelper
 	 */
 	public function insertTest()
 	{
-		$insertQuery = Mock::m('System\Database\MySql\Query\InsertQuery');
+		$insertQuery = Mock::m('System\Database\Query\InsertQuery');
 		$query       = 'query';
 		$placeholder = 'placeholder';
 
@@ -95,7 +95,7 @@ class TestInsertQuery extends TestHelper
 			->_setReturn($lastInsertId)
 			->e();
 
-		$connection = Mock::m('System\Database\MySql\Connection')
+		$connection = Mock::m('System\Database\Connection')
 			->_setMethod('get')
 			->_setArgs('master')
 			->_setReturn($pdo)
@@ -127,7 +127,7 @@ class TestInsertQuery extends TestHelper
 	 */
 	public function insertTestWhenExcepion()
 	{
-		$insertQuery = Mock::m('System\Database\MySql\Query\InsertQuery');
+		$insertQuery = Mock::m('System\Database\Query\InsertQuery');
 
 		$pdo = Mock::m()
 			->_setMethod('inTransaction')
@@ -135,7 +135,7 @@ class TestInsertQuery extends TestHelper
 			->_setReturn(false)
 			->e();
 
-		$connection = Mock::m('System\Database\MySql\Connection')
+		$connection = Mock::m('System\Database\Connection')
 			->_setMethod('get')
 			->_setArgs('master')
 			->_setReturn($pdo)
@@ -159,7 +159,7 @@ class TestInsertQuery extends TestHelper
 	 */
 	public function createInsertPartsTest()
 	{
-		$insertQuery = Mock::m('System\Database\MySql\Query\InsertQuery');
+		$insertQuery = Mock::m('System\Database\Query\InsertQuery');
 		$insertQuery->calledModel = 'Test\TestInsertModel';
 		$testModel = TestInsertModel::make([
 			'id'       => 1,
@@ -180,7 +180,7 @@ class TestInsertQuery extends TestHelper
 	{
 		$query = 'A = ?, B = ?, C = ?';
 
-		$insertQuery = Mock::m('System\Database\MySql\Query\InsertQuery');
+		$insertQuery = Mock::m('System\Database\Query\InsertQuery');
 		$insertQuery->_setMethod('createInsertParts')
 			->_setArgs([])
 			->_setReturn(null)
@@ -196,7 +196,7 @@ class TestInsertQuery extends TestHelper
 
 namespace Test;
 
-use System\Database\MySql\BaseModel;
+use System\Database\BaseModel;
 use System\Type\Other\Point;
 
 class TestInsertModel extends BaseModel

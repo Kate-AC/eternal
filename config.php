@@ -36,7 +36,16 @@ define('SYSTEM_ERROR_LOG_FILE', SOURCE_DIR . 'log/system_error');
 
 const USE_SYSTEM_ERROR_LOG_FILE = false;
 
-/* MySQLの設定 ========================================================================== */
+
+/* 使用するデータベースの設定 =========================================================== */
+
+const DB_MYSQL    = 1;
+const DB_POSTGRES = 2;
+
+define('USE_DB', DB_POSTGRES);
+
+
+/* データベースの設定 =================================================================== */
 
 function getConnectionList()
 {
@@ -45,9 +54,9 @@ function getConnectionList()
 		'master' => [
 			'use'      => true,
 			'host'     => 'localhost',
-			'database' => 'monday',
-			'user'     => 'root',
-			'password' => 'root'
+			'database' => 'postgres',
+			'user'     => 'postgres',
+			'password' => 'manager'
 		],
 		'slave1' => [
 			'use'      => false,
@@ -119,6 +128,7 @@ function getUnUseDirs()
 function getTablePrefix()
 {
 	return [
+		't',
 		'tbl',
 		'mst'
 	];

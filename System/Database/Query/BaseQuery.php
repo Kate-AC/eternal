@@ -4,10 +4,10 @@
  * クエリ設定の共通クラス
  */
 
-namespace System\Database\MySql\Query;
+namespace System\Database\Query;
 
 use System\Core\Di\Container;
-use System\Database\MySql\Connection;
+use System\Database\Connection;
 use System\Exception\DatabaseException;
 use System\Util\StringOperator;
 
@@ -148,9 +148,13 @@ class BaseQuery
 	public function getQuery()
 	{
 		$query = $this->create();
+		$placeholderList = [];
+		foreach ($this->placeholder as $placeholder) {
+			$placeholderList[] = sprintf("'%s'", $placeholder);
+		}
 		$query = preg_replace('/\ +/', ' ', $query);
 		$query = str_replace('?', '%s', $query);
-		return vsprintf($query, $this->placeholder);
+		return vsprintf($query, $placeholderList);
 	}
 
 	/**

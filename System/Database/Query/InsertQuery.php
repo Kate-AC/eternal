@@ -4,7 +4,7 @@
  * INSERTクエリ
  */
 
-namespace System\Database\MySql\Query;
+namespace System\Database\Query;
 
 use System\Exception\DatabaseException;
 use System\Util\StringOperator;
@@ -71,11 +71,11 @@ class InsertQuery extends BaseQuery
 				if (is_null($class->$getter())) {
 					$valueList[] = 'NULL';
 				} else if ($class->$getter() instanceof \DateTime || $class->$getter() instanceof \DateTimeImmutable) {
-					$valueList[] = sprintf('"%s"', $class->$getter()->format('Y-m-d H:i:s'));
+					$valueList[] = sprintf("'%s'", $class->$getter()->format('Y-m-d H:i:s'));
 				} elseif ($class->$getter() instanceof Point) {
-					$valueList[] = sprintf('ST_GeomFromText("POINT(%s %s)")', $class->$getter()->getLng(), $class->$getter()->getLat());
+					$valueList[] = sprintf("ST_GeomFromText('POINT(%s %s)')", $class->$getter()->getLng(), $class->$getter()->getLat());
 				} elseif (is_string($class->$getter())) {
-					$valueList[] = sprintf('"%s"', $class->$getter());
+					$valueList[] = sprintf("'%s'", $class->$getter());
 				} else {
 					$valueList[] = $class->$getter();
 				}

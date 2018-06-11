@@ -4,7 +4,7 @@
  * 接続情報を保持するクラス
  */
 
-namespace System\Database\MySql;
+namespace System\Database;
 
 use System\Exception\DatabaseException;
 
@@ -37,17 +37,37 @@ class Connection
 			}
 
 			if (!isset(self::$pdo[$key])) {
-				self::$pdo[$key] = new \PDO(
-					sprintf('mysql:host=%s; dbname=%s; charset=utf8;',
-						$connection['host'],
-						$connection['database']
-					),
-					$connection['user'],
-					$connection['password'],
-					[
-						\PDO::ATTR_PERSISTENT => true
-					]
-				);
+				switch (USE_DB) {
+					default:
+					case DB_MYSQL:
+						$db = new \PDO(
+							sprintf('mysql:host=%s; dbname=%s; charset=utf8;',
+								$connection['host'],
+								$connection['database']
+							),
+							$connection['user'],
+							$connection['password'],
+							[
+								\PDO::ATTR_PERSISTENT => true
+							]
+						);
+						break;
+					case DB_POSTGRES:
+						$db = new \PDO(
+							sprintf('pgsql:host=%s; dbname=%s;',
+								$connection['host'],
+								$connection['database']
+							),
+							$connection['user'],
+							$connection['password'],
+							[
+								\PDO::ATTR_PERSISTENT => true
+							]
+						);
+						break;
+				}
+
+				self::$pdo[$key] = $db;
 				self::$pdo[$key]->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 			}
 

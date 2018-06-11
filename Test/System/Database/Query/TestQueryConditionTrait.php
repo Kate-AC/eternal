@@ -4,11 +4,11 @@
  * QueryConditionTraitテスト
  */
 
-namespace Test\System\Database\MySql\Query;
+namespace Test\System\Database\Query;
 
 use System\Core\Di\Container;
-use System\Database\MySql\Query\QueryConditionTrait;
-use System\Database\MySql\Connection;
+use System\Database\Query\QueryConditionTrait;
+use System\Database\Connection;
 use System\Exception\DatabaseException;
 use Test\Mock;
 use Test\TestHelper;
@@ -111,7 +111,7 @@ class TestQueryConditionTrait extends TestHelper
 
 namespace Test;
 
-use System\Database\MySql\Query\BaseQuery;
+use System\Database\Query\BaseQuery;
 
 class ConditionQuery extends BaseQuery
 {

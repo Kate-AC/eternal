@@ -4,7 +4,7 @@
  * Condition
  */
 
-namespace System\Database\MySql\Query;
+namespace System\Database\Query;
 
 class Condition
 {
@@ -26,12 +26,12 @@ class Condition
 			if (is_array($condition['value'])) {
 				$in = [];
 				foreach ($condition['value'] as $v) {
-					$this->placeholder[] = is_string($v) ? sprintf('"%s"', $v) : $v;
+					$this->placeholder[] = $v;
 					$in[] = '?';
 				}
 				$list[] = sprintf('%s %s (%s)', $condition['column'], $condition['comparison'], implode(', ', $in)); 
 			} else {
-				$this->placeholder[] = is_string($condition['value']) ? sprintf('"%s"', $condition['value']) : $condition['value'];
+				$this->placeholder[] = $condition['value'];
 				$list[] = sprintf('%s %s ?', $condition['column'], $condition['comparison']); 
 			}
 		}

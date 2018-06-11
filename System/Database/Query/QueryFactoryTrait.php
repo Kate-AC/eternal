@@ -4,9 +4,9 @@
  * クエリを生成するトレイト
  */
 
-namespace System\Database\MySql\Query;
+namespace System\Database\Query;
 
-use System\Database\MySql\Collect;
+use System\Database\Collect;
 use System\Exception\DatabaseException;
 use System\Util\FilePathSearcher;
 use System\Util\StringOperator;

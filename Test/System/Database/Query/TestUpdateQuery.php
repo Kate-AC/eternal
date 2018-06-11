@@ -4,9 +4,9 @@
  * UPDATEクエリテスト
  */
 
-namespace Test\System\Database\MySql\Query;
+namespace Test\System\Database\Query;
 
-use System\Database\MySql\Query\UpdateQuery;
+use System\Database\Query\UpdateQuery;
 use System\Exception\DatabaseException;
 use Test\Mock;
 use Test\TestHelper;
@@ -18,7 +18,7 @@ class TestUpdateQuery extends TestHelper
 	 */
 	public function createTest()
 	{
-		$updateQuery = Mock::m('System\Database\MySql\Query\UpdateQuery');
+		$updateQuery = Mock::m('System\Database\Query\UpdateQuery');
 		$updateQuery
 			->_setMethod('getExplainLine')
 			->_setArgs()
@@ -48,7 +48,7 @@ class TestUpdateQuery extends TestHelper
 	 */
 	public function updateTest()
 	{
-		$updateQuery = Mock::m('System\Database\MySql\Query\UpdateQuery');
+		$updateQuery = Mock::m('System\Database\Query\UpdateQuery');
 		$query       = 'query';
 		$placeholder = 'placeholder';
 
@@ -83,7 +83,7 @@ class TestUpdateQuery extends TestHelper
 			->_setReturn($prepare)
 			->e();
 
-		$connection = Mock::m('System\Database\MySql\Connection')
+		$connection = Mock::m('System\Database\Connection')
 			->_setMethod('get')
 			->_setArgs('master')
 			->_setReturn($pdo)
@@ -99,7 +99,7 @@ class TestUpdateQuery extends TestHelper
 	 */
 	public function updateTestWhenExcepion()
 	{
-		$updateQuery = Mock::m('System\Database\MySql\Query\UpdateQuery');
+		$updateQuery = Mock::m('System\Database\Query\UpdateQuery');
 
 		$pdo = Mock::m()
 			->_setMethod('inTransaction')
@@ -107,7 +107,7 @@ class TestUpdateQuery extends TestHelper
 			->_setReturn(false)
 			->e();
 
-		$connection = Mock::m('System\Database\MySql\Connection')
+		$connection = Mock::m('System\Database\Connection')
 			->_setMethod('get')
 			->_setArgs('master')
 			->_setReturn($pdo)
@@ -129,7 +129,7 @@ class TestUpdateQuery extends TestHelper
 	 */
 	public function setAndGetSetLineTest()
 	{
-		$reflection = new \ReflectionClass('System\Database\MySql\Query\UpdateQuery');
+		$reflection = new \ReflectionClass('System\Database\Query\UpdateQuery');
 		$updateQuery = $reflection->newInstanceWithoutConstructor();
 
 		$updateQuery->set([

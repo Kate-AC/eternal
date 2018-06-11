@@ -6,7 +6,7 @@
 
 namespace System\Util;
 
-use System\Database\MySql\Connection;
+use System\Database\Connection;
 use System\Exception\SystemException;
 use System\Util\StringOperator;
 
@@ -100,8 +100,18 @@ class ModelCreator
 	 */
 	private function getTableName()
 	{
-		$pdo     = $this->connection->getAuto();
-		$prepare = $pdo->query('SHOW TABLES');
+		$pdo = $this->connection->getAuto();
+
+		switch (USE_DB) {
+			default:
+			case DB_MYSQL:
+				$prepare = $pdo->query('SHOW TABLES');
+				break;
+			case DB_POSTGRES:
+				$prepare = $pdo->query('SELECT relname FROM pg_stat_user_tables');
+				break;
+		}
+
 		$prepare->setFetchMode(\PDO::FETCH_ASSOC);
 		$resultList = $prepare->fetchAll();
 
@@ -148,10 +158,46 @@ class ModelCreator
 	 */
 	private function parseColumn()
 	{
-		$pdo     = $this->connection->getAuto();
-		$prepare = $pdo->query(sprintf('SHOW COLUMNS FROM %s', $this->tableName));
-		$prepare->setFetchMode(\PDO::FETCH_ASSOC);
-		$resultList = $prepare->fetchAll();
+		$pdo = $this->connection->getAuto();
+
+		switch (USE_DB) {
+			default:
+			case DB_MYSQL:
+				$prepare = $pdo->query(sprintf('SHOW COLUMNS FROM %s', $this->tableName));
+				$prepare->setFetchMode(\PDO::FETCH_ASSOC);
+				$resultList = $prepare->fetchAll();
+				break;
+			case DB_POSTGRES:
+				//プライマリーキーの取得
+				$query = [];
+				$query[] = 'SELECT ccu.column_name as column_name';
+				$query[] = 'FROM information_schema.table_constraints tc, information_schema.constraint_column_usage ccu';
+				$query[] = sprintf("WHERE tc.table_name = '%s'", $this->tableName);
+				$query[] = sprintf("AND tc.constraint_type = '%s'", 'PRIMARY KEY');
+				$query[] = 'AND tc.table_catalog = ccu.table_catalog';
+				$query[] = 'AND tc.table_schema = ccu.table_schema';
+				$query[] = 'AND tc.table_name = ccu.table_name';
+				$query[] = 'AND tc.constraint_name = ccu.constraint_name';
+
+				$prepare = $pdo->query(implode(' ', $query));
+				$prepare->setFetchMode(\PDO::FETCH_ASSOC);
+				$primaryKeyList = $prepare->fetchAll();
+
+				$prepare = $pdo->query(sprintf("SELECT * FROM information_schema.columns WHERE table_name = '%s'", $this->tableName));
+				$prepare->setFetchMode(\PDO::FETCH_ASSOC);
+				$columnList = $prepare->fetchAll();
+
+				$resultList = [];
+				foreach ($columnList as $column) {
+					$resultList[] = [
+						'Field'   => $column['column_name'],
+						'Type'    => $column['udt_name'],
+						'Default' => 'now()' !== $column['column_default'] ? $column['column_default'] : 'CURRENT_TIMESTAMP',
+						'Key'     => in_array($column['column_name'], $primaryKeyList, true) ? 'PRI' : null
+					];
+				}
+				break;
+		}
 
 		foreach ($resultList as $result) {
 			if ('PRI' === $result['Key']) {
@@ -379,7 +425,7 @@ EOD;
 
 namespace {$namespace};
 
-use System\Database\MySql\BaseModel;
+use System\Database\BaseModel;
 {$point}
 class {$this->modelName}Skeleton extends BaseModel
 {

@@ -4,9 +4,9 @@
  * DELETEクエリテスト
  */
 
-namespace Test\System\Database\MySql\Query;
+namespace Test\System\Database\Query;
 
-use System\Database\MySql\Query\DeleteQuery;
+use System\Database\Query\DeleteQuery;
 use System\Exception\DatabaseException;
 use Test\Mock;
 use Test\TestHelper;
@@ -18,7 +18,7 @@ class TestDeleteQuery extends TestHelper
 	 */
 	public function createTest()
 	{
-		$deleteQuery = Mock::m('System\Database\MySql\Query\DeleteQuery');
+		$deleteQuery = Mock::m('System\Database\Query\DeleteQuery');
 		$deleteQuery
 			->_setMethod('getExplainLine')
 			->_setArgs()
@@ -41,7 +41,7 @@ class TestDeleteQuery extends TestHelper
 	 */
 	public function deleteTest()
 	{
-		$deleteQuery = Mock::m('System\Database\MySql\Query\DeleteQuery');
+		$deleteQuery = Mock::m('System\Database\Query\DeleteQuery');
 		$query       = 'query';
 		$placeholder = 'placeholder';
 
@@ -76,7 +76,7 @@ class TestDeleteQuery extends TestHelper
 			->_setReturn($prepare)
 			->e();
 
-		$connection = Mock::m('System\Database\MySql\Connection')
+		$connection = Mock::m('System\Database\Connection')
 			->_setMethod('get')
 			->_setArgs('master')
 			->_setReturn($pdo)
@@ -92,7 +92,7 @@ class TestDeleteQuery extends TestHelper
 	 */
 	public function deleteTestWhenExcepion()
 	{
-		$deleteQuery = Mock::m('System\Database\MySql\Query\DeleteQuery');
+		$deleteQuery = Mock::m('System\Database\Query\DeleteQuery');
 
 		$pdo = Mock::m()
 			->_setMethod('inTransaction')
@@ -100,7 +100,7 @@ class TestDeleteQuery extends TestHelper
 			->_setReturn(false)
 			->e();
 
-		$connection = Mock::m('System\Database\MySql\Connection')
+		$connection = Mock::m('System\Database\Connection')
 			->_setMethod('get')
 			->_setArgs('master')
 			->_setReturn($pdo)

@@ -4,11 +4,11 @@
  * SELECTクエリテスト
  */
 
-namespace Test\System\Database\MySql\Query;
+namespace Test\System\Database\Query;
 
 use System\Core\Di\Container;
-use System\Database\MySql\Connection;
-use System\Database\MySql\Query\SelectQuery;
+use System\Database\Connection;
+use System\Database\Query\SelectQuery;
 use System\Exception\DatabaseException;
 use Test\Mock;
 use Test\TestHelper;
@@ -35,7 +35,7 @@ class TestSelectQuery extends TestHelper
 	 */
 	public function selectAndGetSelectLineTestWhenSelected()
 	{
-		$reflection = new \ReflectionClass('System\Database\MySql\Query\SelectQuery');
+		$reflection = new \ReflectionClass('System\Database\Query\SelectQuery');
 
 		$selectQuery = $reflection->newInstanceWithoutConstructor();
 		$proprety = new \ReflectionProperty($selectQuery, 'tableName');
@@ -77,7 +77,7 @@ class TestSelectQuery extends TestHelper
 	 */
 	public function getSelectLineTest()
 	{
-		$selectQuery = Mock::m('System\Database\MySql\Query\SelectQuery');
+		$selectQuery = Mock::m('System\Database\Query\SelectQuery');
 		$selectQuery->tableName = 'tbl_test_main_model';
 		$selectQuery->tableAsName = [
 			'tbl_test_main_model' => 'tbl_test_main_model',
@@ -110,7 +110,7 @@ class TestSelectQuery extends TestHelper
 	 */
 	public function groupByAndGetGroupByLineTest()
 	{
-		$reflection  = new \ReflectionClass('System\Database\MySql\Query\SelectQuery');
+		$reflection  = new \ReflectionClass('System\Database\Query\SelectQuery');
 		$selectQuery = $reflection->newInstanceWithoutConstructor();
 
 		$property = new \ReflectionProperty($selectQuery, 'groupBy');
@@ -134,7 +134,7 @@ class TestSelectQuery extends TestHelper
 	 */
 	public function orderByAndGetOrderByLineTest()
 	{
-		$reflection  = new \ReflectionClass('System\Database\MySql\Query\SelectQuery');
+		$reflection  = new \ReflectionClass('System\Database\Query\SelectQuery');
 		$selectQuery = $reflection->newInstanceWithoutConstructor();
 
 		$property = new \ReflectionProperty($selectQuery, 'orderBy');
@@ -162,7 +162,7 @@ class TestSelectQuery extends TestHelper
 	 */
 	public function offsetAndGetOffsetLineTest()
 	{
-		$reflection  = new \ReflectionClass('System\Database\MySql\Query\SelectQuery');
+		$reflection  = new \ReflectionClass('System\Database\Query\SelectQuery');
 		$selectQuery = $reflection->newInstanceWithoutConstructor();
 
 		$property = new \ReflectionProperty($selectQuery, 'offset');
@@ -185,7 +185,7 @@ class TestSelectQuery extends TestHelper
 	 */
 	public function limitGetLimitLineTest()
 	{
-		$reflection  = new \ReflectionClass('System\Database\MySql\Query\SelectQuery');
+		$reflection  = new \ReflectionClass('System\Database\Query\SelectQuery');
 		$selectQuery = $reflection->newInstanceWithoutConstructor();
 
 		$property = new \ReflectionProperty($selectQuery, 'limit');
@@ -221,11 +221,11 @@ class TestSelectQuery extends TestHelper
 	 */
 	public function getFromLineTest()
 	{
-		$selectQuery = Mock::m('System\Database\MySql\Query\SelectQuery');
+		$selectQuery = Mock::m('System\Database\Query\SelectQuery');
 		$selectQuery->tableName = 'hoge';
 		$this->compareValue('hoge AS hoge', $selectQuery->getFromLine(), 'fromが空の場合');
 
-		$from = Mock::m('System\Database\MySql\Query\SelectQuery');
+		$from = Mock::m('System\Database\Query\SelectQuery');
 		$from->placeholder = [2, 3];
 		$from->_setMethod('getBeforeQuery')
 			->_setArgs()
@@ -271,7 +271,7 @@ class TestSelectQuery extends TestHelper
 	 */
 	public function createTest()
 	{
-		$selectQuery = Mock::m('System\Database\MySql\Query\SelectQuery');
+		$selectQuery = Mock::m('System\Database\Query\SelectQuery');
 		$selectQuery->tableAsName = ['hoge' => 'A'];
 
 		$selectQuery->_setMethod('getExplainLine')->_setArgs()->_setReturn('COUNT(hoge.fuga)')->e();
@@ -322,7 +322,7 @@ class TestJoinModel
 
 namespace Test;
 
-use System\Database\MySql\BaseModel;
+use System\Database\BaseModel;
 
 class HogeModel extends BaseModel
 {

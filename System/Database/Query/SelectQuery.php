@@ -4,7 +4,7 @@
  * SELECTクエリ
  */
 
-namespace System\Database\MySql\Query;
+namespace System\Database\Query;
 
 use System\Util\StringOperator;
 
@@ -444,6 +444,10 @@ class SelectQuery extends BaseQuery
 			$this->getForUpdateLine(),
 			$this->getOffsetLine()
 		);
+
+		if (USE_DB === DB_POSTGRES) {
+			$query = preg_replace('/\`/', '"', $query);
+		}
 
 		return $query;
 	}

@@ -4,7 +4,7 @@
  * トランザクションクラス
  */
 
-namespace System\Database\MySql;
+namespace System\Database;
 
 class TransactionFactory
 {

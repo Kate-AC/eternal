@@ -4,11 +4,11 @@
  * Baseクエリテスト
  */
 
-namespace Test\System\Database\MySql\Query;
+namespace Test\System\Database\Query;
 
 use System\Core\Di\Container;
-use System\Database\MySql\Connection;
-use System\Database\MySql\Query\BaseQuery;
+use System\Database\Connection;
+use System\Database\Query\BaseQuery;
 use System\Exception\DatabaseException;
 use Test\Mock;
 use Test\TestHelper;
@@ -135,7 +135,7 @@ class TestBaseQuery extends TestHelper
 
 namespace Test;
 
-use System\Database\MySql\Query\BaseQuery;
+use System\Database\Query\BaseQuery;
 
 class ChildQuery extends BaseQuery
 {

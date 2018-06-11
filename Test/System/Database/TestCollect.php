@@ -4,9 +4,9 @@
  * Collectのテスト
  */
 
-namespace Test\System\Database\MySql;
+namespace Test\System\Database;
 
-use System\Database\MySql\Collect;
+use System\Database\Collect;
 use Test\Mock;
 use Test\Parse;
 use Test\TestHelper;
@@ -20,7 +20,7 @@ class TestCollect extends TestHelper
 	{
 		$list    = ['hoge' => 99, 'fuga' => 100];
 		$collect = new Collect($list);
-		$this->compareInstance('System\Database\MySql\Collect', $collect, 'インスタンス生成');
+		$this->compareInstance('System\Database\Collect', $collect, 'インスタンス生成');
 
 		$reflectionProperty = new \ReflectionProperty($collect, 'properties');
 		$reflectionProperty->setAccessible(true);

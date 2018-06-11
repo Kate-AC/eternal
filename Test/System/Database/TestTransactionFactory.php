@@ -4,10 +4,10 @@
  * TransactionFactoryのテスト
  */
 
-namespace Test\System\Database\MySql;
+namespace Test\System\Database;
 
-use System\Database\MySql\TransactionFactory;
-use System\Database\MySql\Connection;
+use System\Database\TransactionFactory;
+use System\Database\Connection;
 use Test\Mock;
 use Test\TestHelper;
 
@@ -31,7 +31,7 @@ class TestTransactionFactory extends TestHelper
 	 */
 	private function common()
 	{
-		$transactionFactory = Mock::m('System\Database\MySql\TransactionFactory');
+		$transactionFactory = Mock::m('System\Database\TransactionFactory');
 		
 		$pdo = Mock::m()
 			->_setMethod('beginTransaction')
@@ -64,7 +64,7 @@ class TestTransactionFactory extends TestHelper
 	 */
 	public function __constructTest()
 	{
-		$this->compareInstance('System\Database\MySql\TransactionFactory', new TransactionFactory(new Connection()));
+		$this->compareInstance('System\Database\TransactionFactory', new TransactionFactory(new Connection()));
 	}
 
 	/**

@@ -6,7 +6,7 @@
 
 namespace Test\System\Util;
 
-use System\Database\MySql\Connection;
+use System\Database\Connection;
 use System\Exception\SystemException;
 use System\Util\ModelCreator;
 use Test\Mock;
@@ -46,7 +46,7 @@ class TestModelCreator extends TestHelper
 			->_setReturn($prepare)
 			->e();
 
-		$connection = Mock::m('System\Database\MySql\Connection')
+		$connection = Mock::m('System\Database\Connection')
 			->_setMethod('getAuto')
 			->_setArgs()
 			->_setReturn($pdo)
@@ -152,7 +152,7 @@ class TestModelCreator extends TestHelper
 			->_setReturn($prepare)
 			->e();
 
-		$connection = Mock::m('System\Database\MySql\Connection')
+		$connection = Mock::m('System\Database\Connection')
 			->_setMethod('getAuto')
 			->_setArgs()
 			->_setReturn($pdo)

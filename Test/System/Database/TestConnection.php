@@ -4,9 +4,9 @@
  * Connectionのテスト
  */
 
-namespace Test\System\Database\MySql;
+namespace Test\System\Database;
 
-use System\Database\MySql\Connection;
+use System\Database\Connection;
 use System\Exception\DatabaseException;
 use Test\Mock;
 use Test\TestHelper;
@@ -52,7 +52,7 @@ class TestConnection extends TestHelper
 	 */
 	public function getConnection()
 	{
-		$connection = Mock::m('System\Database\MySql\Connection');
+		$connection = Mock::m('System\Database\Connection');
 		$connection
 			->_setMethod('getConnectionList')
 			->_setArgs()
@@ -87,7 +87,7 @@ class TestConnection extends TestHelper
 			}
 		}
 
-		$connection = Mock::m('System\Database\MySql\Connection');
+		$connection = Mock::m('System\Database\Connection');
 		$connection
 			->_setMethod('getConnectionList')
 			->_setArgs()
@@ -102,7 +102,7 @@ class TestConnection extends TestHelper
 			$configList[$key]['use'] = false;
 		}
 
-		$connection = Mock::m('System\Database\MySql\Connection');
+		$connection = Mock::m('System\Database\Connection');
 		$connection
 			->_setMethod('getConnectionList')
 			->_setArgs()
@@ -123,7 +123,7 @@ class TestConnection extends TestHelper
 	 */
 	public function getConnectionListTest()
 	{
-		$connection = Mock::m('System\Database\MySql\Connection');
+		$connection = Mock::m('System\Database\Connection');
 		$configList = $connection->getConnectionList();
 		$this->compareValue(true, isset($configList['master']), 'マスタ設定の存在確認のみ');
 	}
@@ -142,7 +142,7 @@ class TestConnection extends TestHelper
 		$connection->pdo = [];
 		$connection->start();
 
-		$property = new \ReflectionProperty('System\Database\MySql\Connection', 'pdo');
+		$property = new \ReflectionProperty('System\Database\Connection', 'pdo');
 		$property->setAccessible(true);
 		$pdoList = $property->getValue();
 
@@ -171,7 +171,7 @@ class TestConnection extends TestHelper
 		$connection->pdo = [];
 		$connection->start();
 
-		$property = new \ReflectionProperty('System\Database\MySql\Connection', 'pdo');
+		$property = new \ReflectionProperty('System\Database\Connection', 'pdo');
 		$property->setAccessible(true);
 		$pdoList = $property->getValue();
 
