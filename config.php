@@ -7,7 +7,7 @@
 /* ディレクトリの設定 =================================================================== */
 
 
-define('CURRENT_DIR',    '/');
+define('CURRENT_DIR',    '');
 define('SOURCE_DIR',     __DIR__    . '/');
 define('FRAMEWORK_DIR',  SOURCE_DIR . 'System/');
 define('TEST_DIR',       SOURCE_DIR . 'Test/');
@@ -42,7 +42,7 @@ const USE_SYSTEM_ERROR_LOG_FILE = false;
 const DB_MYSQL    = 1;
 const DB_POSTGRES = 2;
 
-define('USE_DB', DB_POSTGRES);
+define('USE_DB', DB_MYSQL);
 
 
 /* データベースの設定 =================================================================== */
@@ -128,7 +128,6 @@ function getUnUseDirs()
 function getTablePrefix()
 {
 	return [
-		't',
 		'tbl',
 		'mst'
 	];
