@@ -123,8 +123,10 @@ class StringOperator
 	 */
 	public static function tableToClassName($table)
 	{
-		$table = self::snakeToCamel($table);
-		return ucfirst(str_ireplace(getTablePrefix(), '', $table));
+		foreach (getTablePrefix() as $t) {
+			$table = preg_replace(sprintf('/(^%s|%s$)/', $t, $t), '', $table);
+		}
+		return ucfirst(self::snakeToCamel($table));
 	}
 
 	/**
