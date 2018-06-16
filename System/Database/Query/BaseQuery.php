@@ -105,6 +105,16 @@ class BaseQuery
 	}
 
 	/**
+	 * DIコンテナを取得する
+	 *
+	 * @return Container
+	 */
+	public function getContainer()
+	{
+		return $this->container;
+	}
+
+	/**
 	 * indexHint
 	 *
 	 * @param string   $tableName

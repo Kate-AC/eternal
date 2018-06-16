@@ -10,6 +10,7 @@ use System\Core\Di\Container;
 use System\Database\Connection;
 use System\Database\Query\Condition;
 use System\Database\Query\DeleteQuery;
+use System\Database\Query\DirectQuery;
 use System\Database\Query\InsertQuery;
 use System\Database\Query\SelectQuery;
 use System\Database\Query\UpdateQuery;
@@ -168,5 +169,16 @@ class BaseModel
 	{
 		$this->connection->get('master');
 		return new DeleteQuery($this->connection, $this->container, get_called_class());
+	}
+
+	/**
+	 * 直接クエリを返す
+	 *
+	 * @return DirectQuery
+	 */
+	public function directQuery()
+	{
+		$this->connection->get('master');
+		return new DirectQuery($this->connection, $this->container, get_called_class());
 	}
 }
