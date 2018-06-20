@@ -29,8 +29,8 @@ trait QueryConditionTrait
 	 */
 	public function where($column, $comparison = null, $value = null)
 	{
-		if (!($column instanceof Condition) && is_null($comparison)) {
-			throw new DatabaseException('第2引数がnullの場合は第1引数にConditionクラスを渡す必要があります');
+		if (!($column instanceof Condition) && !is_string($column) && is_null($comparison)) {
+			throw new DatabaseException('第2引数がnullの場合は第1引数に文字列型かConditionクラスを渡す必要があります');
 		}
 
 		if (!($value instanceof SelectQuery) && is_object($value)) {
@@ -55,8 +55,8 @@ trait QueryConditionTrait
 	 */
 	public function otherwise($column, $comparison = null, $value = null)
 	{
-		if (!($column instanceof Condition) && is_null($comparison)) {
-			throw new DatabaseException('第2引数がnullの場合は第1引数にConditionクラスを渡す必要があります');
+		if (!($column instanceof Condition) && !is_string($column) && is_null($comparison)) {
+			throw new DatabaseException('第2引数がnullの場合は第1引数に文字列型かConditionクラスを渡す必要があります');
 		}
 
 		if (!($value instanceof SelectQuery) && is_object($value)) {
@@ -89,7 +89,9 @@ trait QueryConditionTrait
 				$list[] = 'WHERE' === $condition['type'] ? 'AND' : 'OR';
 			}
 
-			if ($condition['column'] instanceof Condition) {
+			if (is_string($condition['column']) && is_null($condition['comparison'])) {
+				$list[] = $condition['column'];
+			} elseif ($condition['column'] instanceof Condition) {
 				$list[] = $condition['column']->get();
 				$this->placeholder = array_merge($this->placeholder, $condition['column']->getPlaceholder());
 			} else {
