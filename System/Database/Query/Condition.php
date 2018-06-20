@@ -23,7 +23,9 @@ class Condition
 				$list[] = 'WHERE' === $condition['type'] ? 'AND' : 'OR';
 			}
 
-			if (is_array($condition['value'])) {
+			if (is_string($condition['column']) && is_null($condition['comparison'])) {
+				$list[] = $condition['column'];
+			} elseif (is_array($condition['value'])) {
 				$in = [];
 				foreach ($condition['value'] as $v) {
 					$this->placeholder[] = $v;
