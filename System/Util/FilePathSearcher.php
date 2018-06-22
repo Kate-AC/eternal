@@ -56,7 +56,6 @@ class FilePathSearcher
 	 */
 	public function search()
 	{
-		$this->allFilePathList = [];
 		foreach ($this->useDirList as $parentDir) {
 			$this->getRecursive($parentDir);
 		}
