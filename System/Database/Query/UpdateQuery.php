@@ -48,6 +48,7 @@ class UpdateQuery extends BaseQuery
 			} elseif ($arg instanceof \DateTime || $arg instanceof \DateTimeImmutable) {
 				$setList[] = sprintf("%s = '%s'", $key, $arg->format('Y-m-d H:i:s'));
 			} elseif (is_string($arg)) {
+				$arg = str_replace("'", "''", $arg);
 				$setList[] = sprintf("%s = '%s'", $key, $arg);
 			} else {
 				$setList[] = sprintf('%s = %s', $key, $arg);
