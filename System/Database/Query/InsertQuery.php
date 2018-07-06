@@ -75,7 +75,8 @@ class InsertQuery extends BaseQuery
 				} elseif ($class->$getter() instanceof Point) {
 					$valueList[] = sprintf("ST_GeomFromText('POINT(%s %s)')", $class->$getter()->getLng(), $class->$getter()->getLat());
 				} elseif (is_string($class->$getter())) {
-					$valueList[] = sprintf("'%s'", $class->$getter());
+					$value = str_replace("'", "''", $class->$getter());
+					$valueList[] = sprintf("'%s'", $value);
 				} else {
 					$valueList[] = $class->$getter();
 				}
