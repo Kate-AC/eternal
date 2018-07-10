@@ -294,12 +294,9 @@ EOD;
 	{
 		$setter = '';
 		foreach ($this->columnInfoList as $columnInfo) {
-			$setter .= <<<EOD
-		if (isset(\$properties['{$columnInfo['column']}'])) {
-
-EOD;
 			if ('\DateTime' === $columnInfo['type']) {
 				$setter .= <<<EOD
+		if (isset(\$properties['{$columnInfo['column']}']) && '' !== \$properties['{$columnInfo['column']}']) {
 			if (!(\$properties['{$columnInfo['column']}'] instanceof \DateTime)) {
 				\$properties['{$columnInfo['column']}'] = {$columnInfo['cast']}(\$properties['{$columnInfo['column']}']);
 			}
@@ -307,26 +304,27 @@ EOD;
 EOD;
 			} else {
 				$setter .= <<<EOD
+		if (isset(\$properties['{$columnInfo['column']}'])) {
 			\$properties['{$columnInfo['column']}'] = {$columnInfo['cast']}(\$properties['{$columnInfo['column']}']);
 
 EOD;
 			}
-			$setter .= <<<EOD
+				$setter .= <<<EOD
 		} else {
 
 EOD;
 
-			if ('\DateTime' !== $columnInfo['type'] && 'null' !== $columnInfo['default']) {
-				if (1 !== preg_match('/^([1-9][0-9]*|[0-9]{1})$/', $columnInfo['default'])) {
-					$columnInfo['default'] = sprintf("'%s'", $columnInfo['default']);
+				if ('\DateTime' !== $columnInfo['type'] && 'null' !== $columnInfo['default']) {
+					if (1 !== preg_match('/^([1-9][0-9]*|[0-9]{1})$/', $columnInfo['default'])) {
+						$columnInfo['default'] = sprintf("'%s'", $columnInfo['default']);
+					}
 				}
-			}
 
-			if ("" === $columnInfo['default']) {
-				$columnInfo['default'] = 'null';
-			}
+				if ("" === $columnInfo['default']) {
+					$columnInfo['default'] = 'null';
+				}
 
-			$setter .= <<<EOD
+				$setter .= <<<EOD
 			\$properties['{$columnInfo['column']}'] = {$columnInfo['default']};
 		}
 
