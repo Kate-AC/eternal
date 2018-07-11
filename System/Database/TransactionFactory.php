@@ -24,6 +24,16 @@ class TransactionFactory
 	}
 
 	/**
+	 * トランザクションが開始されているかどうか調べる
+	 *
+	 * @return bool
+	 */
+	public function inTransaction()
+	{
+		return $this->connection->get('master')->inTransaction();
+	}
+
+	/**
 	 * トランザクションを開始する
 	 */
 	public function beginTransaction()
