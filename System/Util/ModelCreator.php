@@ -108,7 +108,7 @@ class ModelCreator
 				$prepare = $pdo->query('SHOW TABLES');
 				break;
 			case DB_POSTGRES:
-				$prepare = $pdo->query('SELECT relname FROM pg_stat_user_tables');
+				$prepare = $pdo->query('SELECT table_name FROM information_schema.tables');
 				break;
 		}
 
@@ -302,6 +302,15 @@ EOD;
 			}
 
 EOD;
+			} elseif ('int' === $columnInfo['type']) {
+				$setter .= <<<EOD
+		if (isset(\$properties['{$columnInfo['column']}'])) {
+			if (is_numeric(\$properties['{$columnInfo['column']}'])) {
+				\$properties['{$columnInfo['column']}'] = {$columnInfo['cast']}(\$properties['{$columnInfo['column']}']);
+			}
+
+EOD;
+
 			} else {
 				$setter .= <<<EOD
 		if (isset(\$properties['{$columnInfo['column']}'])) {
