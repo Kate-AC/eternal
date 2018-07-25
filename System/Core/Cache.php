@@ -57,7 +57,7 @@ class Cache
 					throw new SystemException('Memcachedは存在しません');
 				}
 				self::$cache = $this->getInstance($this->cacheType);
-				if (!self::$cache->connect(MEMCACHE_HOST, MEMCACHE_PORT)) {
+				if (!self::$cache->addServer(MEMCACHE_HOST, MEMCACHE_PORT)) {
 					throw new SystemException('Memcachedに接続できません。ホスト名とポートを確認してください。');
 				}
 				break;
