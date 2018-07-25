@@ -129,6 +129,11 @@ class Connection
 		if (is_null($this->useConnection)) {
 			$this->start();
 		}
+
+		if (!isset(self::$pdo[$this->useConnection])) {
+			$this->start();
+		}
+
 		return self::$pdo[$this->useConnection];
 	}
 
