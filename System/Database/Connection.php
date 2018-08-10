@@ -48,7 +48,6 @@ class Connection
 							$connection['user'],
 							$connection['password'],
 							[
-								\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false,
 								\PDO::ATTR_PERSISTENT => true
 							]
 						);
@@ -62,7 +61,6 @@ class Connection
 							$connection['user'],
 							$connection['password'],
 							[
-								\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false,
 								\PDO::ATTR_PERSISTENT => true
 							]
 						);
