@@ -95,7 +95,7 @@ class Image
 	 * @param string $name
 	 */
 	public function __construct($uri = null, $name = null)
-	{
+  {
 		$this->name = $name;
 
 		if (!is_null($uri)) {
@@ -300,7 +300,7 @@ class Image
 	/**
 	 * 画像をコンバートする
 	 */
-	private function convert()
+	public function convert()
 	{
 		switch ($this->originalExtension) {
 			case self::TYPE_JPG:
@@ -384,7 +384,45 @@ class Image
 		imagedestroy($this->compressed);
 	}
 
-	/**
+  /**
+   * base64にエンコードした文字列を取得
+	 */
+	public function getBase64()
+	{
+    ob_start();
+		switch ($this->extension) {
+			case self::TYPE_JPG:
+				if (!is_null($this->quality) && (100 < $this->quality || 0 > $this->quality)) {
+					throw new SystemException('jpgのqualityに指定できる値は0～100です');
+				}
+        imagejpeg($this->compressed);
+        $stream  = ob_get_contents();
+        $encoded = 'data:image/jpeg;base64,' . base64_encode($stream);
+        break;
+			case self::TYPE_PNG:
+				if (!is_null($this->quality) && (9 < $this->quality || 0 > $this->quality)) {
+					throw new SystemException('pngのqualityに指定できる値は0～9です');
+        }
+        imagepng($this->compressed);
+        $stream  = ob_get_contents();
+        $encoded = 'data:image/png;base64,' . base64_encode($stream);
+				break;
+			case self::TYPE_GIF:
+        imagegif($this->compressed);
+        $stream  = ob_get_contents();
+        $encoded = 'data:image/gif;base64,' . base64_encode($stream);
+				break;
+      case self::TYPE_BMP:
+        imagebmp($this->compressed);
+        $stream  = ob_get_contents();
+        $encoded = 'data:image/bmp;base64,' . base64_encode($stream);
+				break;
+		}
+    ob_end_clean();
+    return $encoded;
+  }
+
+  /**
 	 * 画像を表示する
 	 */
 	public function show()

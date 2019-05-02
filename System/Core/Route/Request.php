@@ -95,7 +95,12 @@ class Request
 	{
 		$fileList = [];
 		foreach ($this->files as $i => $file) {
-			$mimeType = $this->getMimeType($file['tmp_name']);
+      if (0 < mb_strlen($file['tmp_name'])) {
+			  $mimeType = $this->getMimeType($file['tmp_name']);
+      } else {
+			  $mimeType = null;
+      }
+
 			switch ($mimeType) {
 				case 'image/png':
 				case 'image/jpeg':
