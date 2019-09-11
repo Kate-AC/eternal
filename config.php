@@ -11,11 +11,13 @@ define('CURRENT_DIR',    '');
 define('SOURCE_DIR',     __DIR__    . '/');
 define('FRAMEWORK_DIR',  SOURCE_DIR . 'System/');
 define('TEST_DIR',       SOURCE_DIR . 'Test/');
+define('APP_DIR',        SOURCE_DIR . 'src/App/');
+define('CONTROLLER_DIR', SOURCE_DIR . 'src/App/Controller/');
+define('MODEL_DIR',      SOURCE_DIR . 'src/App/Model/');
 define('PUBLIC_DIR',     SOURCE_DIR . 'public/');
-define('APP_DIR',        SOURCE_DIR . 'public/App/');
-define('CONTROLLER_DIR', SOURCE_DIR . 'public/App/Controller/');
-define('MODEL_DIR',      SOURCE_DIR . 'public/App/Model/');
-define('TEMPLATE_DIR',   SOURCE_DIR . 'public/template/');
+define('VIEW_DIR',       SOURCE_DIR . 'public/view/');
+define('CSS_DIR',        SOURCE_DIR . 'public/css/');
+define('JS_DIR',         SOURCE_DIR . 'public/js/');
 
 
 /* テンプレートの拡張子の設定 =========================================================== */

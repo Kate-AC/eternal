@@ -1,0 +1,32 @@
+{
+  "name": "Eternal",
+  "version": "1.0.0",
+  "description": "My webpack project",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "start": "webpack-dev-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Kate-AC/Eternal.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kate-AC/Eternal/issues"
+  },
+  "homepage": "https://github.com/Kate-AC/Eternal",
+  "devDependencies": {
+    "css-loader": "^3.2.0",
+    "mini-css-extract-plugin": "^0.8.0",
+    "node-sass": "^4.12.0",
+    "npm-watch": "^0.6.0",
+    "sass-loader": "^8.0.0",
+    "vue": "^2.6.10",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.8"
+  }
+}

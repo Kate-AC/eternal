@@ -4,6 +4,7 @@
  * 初動に必要なファイルを宣言する 
  */
 
+require(SOURCE_DIR    . 'vendor/autoload.php');
 require(FRAMEWORK_DIR . 'Core/AutoLoader.php');
 require(FRAMEWORK_DIR . 'Core/Extend/ExtendProtocol.php');
 require(FRAMEWORK_DIR . 'Core/Extend/Module/AbstractModule.php');
@@ -12,7 +13,6 @@ require(FRAMEWORK_DIR . 'Log/AbstractLogger.php');
 require(FRAMEWORK_DIR . 'Log/SystemErrorLogger.php');
 require(FRAMEWORK_DIR . 'Exception/AbstractException.php');
 require(FRAMEWORK_DIR . 'Exception/SystemException.php');
-require(FRAMEWORK_DIR . 'NotClass/CallPrimitiveFunction.php');
 require(FRAMEWORK_DIR . 'NotClass/DebugFunction.php');
 require(FRAMEWORK_DIR . 'Util/FilePathSearcher.php');
 require(FRAMEWORK_DIR . 'Util/StringOperator.php');
