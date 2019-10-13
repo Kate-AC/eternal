@@ -12,10 +12,9 @@ use System\Util\StringOperator;
 
 $filePathSearcher = new FilePathSearcher();
 $testFilePathList = $filePathSearcher->setUseDir([TEST_DIR . 'System/'])
-	->setUnUseDir(getUnUseDirs())
-	->search();
+    ->setUnUseDir(getUnUseDirs())
+    ->search();
 
 foreach ($testFilePathList as $filePath) {
-	$container->get(StringOperator::pathToNameSpace($filePath))->run();
+    $container->get(StringOperator::pathToNameSpace($filePath))->run();
 }
-

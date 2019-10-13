@@ -18,87 +18,87 @@ use Test\TestModule;
 
 class TestExtendProtocol extends TestHelper
 {
-	/**
-	 * start
-	 */
-	public function startTest()
-	{
-		$extendProtocol = new ExtendProtocol();
-		$this->compareValue($extendProtocol, $extendProtocol->start());
-	}
+    /**
+     * start
+     */
+    public function startTest()
+    {
+        $extendProtocol = new ExtendProtocol();
+        $this->compareValue($extendProtocol, $extendProtocol->start());
+    }
 
-	/**
-	 * end
-	 */
-	public function endTest()
-	{
-		$extendProtocol = new ExtendProtocol();
-		$this->compareValue(null, $extendProtocol->end());
-	}
+    /**
+     * end
+     */
+    public function endTest()
+    {
+        $extendProtocol = new ExtendProtocol();
+        $this->compareValue(null, $extendProtocol->end());
+    }
 
-	/**
-	 * stream_stat
-	 */
-	public function stream_statTest()
-	{
-		$extendProtocol = Mock::m('System\Core\Extend\ExtendProtocol');
-		$extendProtocol->status = 'status';
-		$this->compareValue('status', $extendProtocol->stream_stat());
-	}
+    /**
+     * stream_stat
+     */
+    public function stream_statTest()
+    {
+        $extendProtocol = Mock::m('System\Core\Extend\ExtendProtocol');
+        $extendProtocol->status = 'status';
+        $this->compareValue('status', $extendProtocol->stream_stat());
+    }
 
-	/**
-	 * stream_read
-	 */
-	public function stream_readTest()
-	{
-		$extendProtocol = Mock::m('System\Core\Extend\ExtendProtocol');
-		$extendProtocol->data     = '1234567890';
-		$extendProtocol->position = 0;
+    /**
+     * stream_read
+     */
+    public function stream_readTest()
+    {
+        $extendProtocol = Mock::m('System\Core\Extend\ExtendProtocol');
+        $extendProtocol->data     = '1234567890';
+        $extendProtocol->position = 0;
 
-		$this->compareValue('123', $extendProtocol->stream_read(3), '読み込んだ分');
-		$this->compareValue(3, $extendProtocol->position, 'ポジション');
-	}
+        $this->compareValue('123', $extendProtocol->stream_read(3), '読み込んだ分');
+        $this->compareValue(3, $extendProtocol->position, 'ポジション');
+    }
 
-	/**
-	 * stream_eof
-	 */
-	public function stream_eofTest()
-	{
-		$extendProtocol = Mock::m('System\Core\Extend\ExtendProtocol');
-		$extendProtocol->data     = '1234567890';
-		$extendProtocol->position = 10;
+    /**
+     * stream_eof
+     */
+    public function stream_eofTest()
+    {
+        $extendProtocol = Mock::m('System\Core\Extend\ExtendProtocol');
+        $extendProtocol->data     = '1234567890';
+        $extendProtocol->position = 10;
 
-		$this->compareValue(true, $extendProtocol->stream_eof(), '終点の場合');
+        $this->compareValue(true, $extendProtocol->stream_eof(), '終点の場合');
 
-		$extendProtocol->position = 2;
-		$this->compareValue(false, $extendProtocol->stream_eof(), '終点ではない場合');
-	}
+        $extendProtocol->position = 2;
+        $this->compareValue(false, $extendProtocol->stream_eof(), '終点ではない場合');
+    }
 
-	/**
-	 * stream_open
-	 * setModule
-	 */
-	public function stream_openAndSetModuleTest()
-	{
-		$extendProtocol = Mock::m('System\Core\Extend\ExtendProtocol');
-		$this->compareValue($extendProtocol, $extendProtocol->setModule(new TestModule()), 'setModule');
-		$this->compareValue(true, $extendProtocol->stream_open('path'), 'stream_open');
-	}
+    /**
+     * stream_open
+     * setModule
+     */
+    public function stream_openAndSetModuleTest()
+    {
+        $extendProtocol = Mock::m('System\Core\Extend\ExtendProtocol');
+        $this->compareValue($extendProtocol, $extendProtocol->setModule(new TestModule()), 'setModule');
+        $this->compareValue(true, $extendProtocol->stream_open('path'), 'stream_open');
+    }
 }
 
 namespace Test;
 
 class TestModule
 {
-	public static function getName()
-	{
-		return 'TestModule';
-	}
+    public static function getName()
+    {
+        return 'TestModule';
+    }
 
-	public function run($path, $data)
-	{
-		return 'data';
-	}
+    public function run($path, $data)
+    {
+        return 'data';
+    }
 }
 
 namespace System\Core\Extend;
@@ -108,7 +108,7 @@ namespace System\Core\Extend;
  */
 function stream_get_wrappers()
 {
-	return ['extend']; 
+    return ['extend'];
 }
 
 /**
@@ -116,7 +116,7 @@ function stream_get_wrappers()
  */
 function stream_wrapper_register()
 {
-	return null;
+    return null;
 }
 
 /**
@@ -124,7 +124,7 @@ function stream_wrapper_register()
  */
 function stream_wrapper_unregister()
 {
-	return null;
+    return null;
 }
 
 /**
@@ -132,7 +132,7 @@ function stream_wrapper_unregister()
  */
 function stat($value)
 {
-	return 'status';
+    return 'status';
 }
 
 /**
@@ -140,5 +140,5 @@ function stat($value)
  */
 function file_get_contents($value)
 {
-	return 'data';
+    return 'data';
 }

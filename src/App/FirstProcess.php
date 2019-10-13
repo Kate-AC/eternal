@@ -8,17 +8,17 @@ namespace App;
 
 class FirstProcess
 {
-	/**
-	 * コンストラクタ
-	 */
-	public function __construct()
-	{
-	}
+    /**
+     * コンストラクタ
+     */
+    public function __construct()
+    {
+    }
 
-	/**
-	 * 最初の処理を実行する
-	 */
-	public function execute()
-	{
-	}
+    /**
+     * 最初の処理を実行する
+     */
+    public function execute()
+    {
+    }
 }

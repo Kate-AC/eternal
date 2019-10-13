@@ -1,8 +1,12 @@
 {
   "require": {
-    "nesbot/carbon": "^2.24",
-    "phpmailer/phpmailer": "^6.0"
+    "nesbot/carbon": "^2.24"
   },
   "require-dev": {
+  },
+  "autoload": {
+    "psr-4": {
+      "\\": "./vendor/"
+    }
   }
 }

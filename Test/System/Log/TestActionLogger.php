@@ -12,16 +12,15 @@ use System\Log\ActionLogger;
 
 class TestActionLogger extends TestHelper
 {
-	/**
-	 * write
-	 */
-	public function writeTest()
-	{
-		$message      = 'LogTest';
-		$path         = '/tmp/ActionLoggerTest';
-		$actionLogger = new ActionLogger();
+    /**
+     * write
+     */
+    public function writeTest()
+    {
+        $message      = 'LogTest';
+        $path         = '/tmp/ActionLoggerTest';
+        $actionLogger = new ActionLogger();
 
-		$this->compareValue(null, $actionLogger->write($message, $path));
-	}
+        $this->compareValue(null, $actionLogger->write($message, $path));
+    }
 }
-

@@ -21,129 +21,129 @@ use Test\TestModel;
 
 class TestBaseModel extends TestHelper
 {
-	/**
-	 * @var Connection
-	 */
-	protected $connection;
+    /**
+     * @var Connection
+     */
+    protected $connection;
 
-	/**
-	 * @var Container
-	 */
-	protected $container;
+    /**
+     * @var Container
+     */
+    protected $container;
 
-	/**
-	 * コンストラクタ
-	 */
-	public function __construct(
-		Connection $connection,
-		Container $container
-	) {
-		$this->connection = $connection;
-		$this->container  = $container;
-	}
+    /**
+     * コンストラクタ
+     */
+    public function __construct(
+        Connection $connection,
+        Container $container
+    ) {
+        $this->connection = $connection;
+        $this->container  = $container;
+    }
 
-	/**
-	 * __construct
-	 */
-	public function __constructTest()
-	{
-		$this->compareInstance('System\Database\BaseModel', new TestModel($this->connection, $this->container));
-	}
+    /**
+     * __construct
+     */
+    public function __constructTest()
+    {
+        $this->compareInstance('System\Database\BaseModel', new TestModel($this->connection, $this->container));
+    }
 
-	/**
-	 * setProperty
-	 */
-	public function setPropertyTest()
-	{
-		$testModel = new TestModel();
-		$testModel->setProperty('id', 99);
-		$this->compareValue(99, $testModel->getId());
-	}
+    /**
+     * setProperty
+     */
+    public function setPropertyTest()
+    {
+        $testModel = new TestModel();
+        $testModel->setProperty('id', 99);
+        $this->compareValue(99, $testModel->getId());
+    }
 
-	/**
-	 * setExtendProperty
-	 * __call
-	 */
-	public function __callAndSetPropertyTest()
-	{
-		$testModel = new TestModel();
-		$testModel->setProperty('id', 99);
-		$testModel->setExtendProperty('id', 'hoge');
-		$this->compareValue(99, $testModel->hoge());
-	}
+    /**
+     * setExtendProperty
+     * __call
+     */
+    public function __callAndSetPropertyTest()
+    {
+        $testModel = new TestModel();
+        $testModel->setProperty('id', 99);
+        $testModel->setExtendProperty('id', 'hoge');
+        $this->compareValue(99, $testModel->hoge());
+    }
 
-	/**
-	 * toArray
-	 */
-	public function toArrayTest()
-	{
-		$testModel = new TestModel();
-		$testModel->setProperty('id', 99);
-		$array = $testModel->toArray();
-		$this->compareValue(['id' => 99], $array);
-	}
+    /**
+     * toArray
+     */
+    public function toArrayTest()
+    {
+        $testModel = new TestModel();
+        $testModel->setProperty('id', 99);
+        $array = $testModel->toArray();
+        $this->compareValue(['id' => 99], $array);
+    }
 
-	/**
-	 * __invoke
-	 */
-	public function __invokeTest()
-	{
-		$testModel = new TestModel();
-		$instance  = $testModel(['id' => 99]);
-		$this->compareValue(99, $instance->getId());
-	}
+    /**
+     * __invoke
+     */
+    public function __invokeTest()
+    {
+        $testModel = new TestModel();
+        $instance  = $testModel(['id' => 99]);
+        $this->compareValue(99, $instance->getId());
+    }
 
-	/**
-	 * selectQuery
-	 */
-	public function selectQueryTest()
-	{
-		$reflection = new \ReflectionProperty($this->connection, 'useConnection');
-		$reflection->setAccessible(true);
-		$reflection->setValue($this->connection, 'slave1');
+    /**
+     * selectQuery
+     */
+    public function selectQueryTest()
+    {
+        $reflection = new \ReflectionProperty($this->connection, 'useConnection');
+        $reflection->setAccessible(true);
+        $reflection->setValue($this->connection, 'slave1');
 
-		$testModel = new TestModel($this->connection, $this->container);
-		$this->compareValueLax(new SelectQuery($this->connection, $this->container, 'Test\TestModel'), $testModel->selectQuery());
-	}
+        $testModel = new TestModel($this->connection, $this->container);
+        $this->compareValueLax(new SelectQuery($this->connection, $this->container, 'Test\TestModel'), $testModel->selectQuery());
+    }
 
-	/**
-	 * insertQuery
-	 */
-	public function insertQueryTest()
-	{
-		$reflection = new \ReflectionProperty($this->connection, 'useConnection');
-		$reflection->setAccessible(true);
-		$reflection->setValue($this->connection, 'master');
+    /**
+     * insertQuery
+     */
+    public function insertQueryTest()
+    {
+        $reflection = new \ReflectionProperty($this->connection, 'useConnection');
+        $reflection->setAccessible(true);
+        $reflection->setValue($this->connection, 'master');
 
-		$testModel = new TestModel($this->connection, $this->container);
-		$this->compareValueLax(new InsertQuery($this->connection, $this->container, 'Test\TestModel'), $testModel->insertQuery());
-	}
+        $testModel = new TestModel($this->connection, $this->container);
+        $this->compareValueLax(new InsertQuery($this->connection, $this->container, 'Test\TestModel'), $testModel->insertQuery());
+    }
 
-	/**
-	 * updateQuery
-	 */
-	public function updateQueryTest()
-	{
-		$reflection = new \ReflectionProperty($this->connection, 'useConnection');
-		$reflection->setAccessible(true);
-		$reflection->setValue($this->connection, 'master');
+    /**
+     * updateQuery
+     */
+    public function updateQueryTest()
+    {
+        $reflection = new \ReflectionProperty($this->connection, 'useConnection');
+        $reflection->setAccessible(true);
+        $reflection->setValue($this->connection, 'master');
 
-		$testModel = new TestModel($this->connection, $this->container);
-		$this->compareValueLax(new UpdateQuery($this->connection, $this->container, 'Test\TestModel'), $testModel->updateQuery());
-	}
+        $testModel = new TestModel($this->connection, $this->container);
+        $this->compareValueLax(new UpdateQuery($this->connection, $this->container, 'Test\TestModel'), $testModel->updateQuery());
+    }
 
-	/**
-	 * deleteQuery
-	 */
-	public function deleteQueryTest()
-	{
-		$reflection = new \ReflectionProperty($this->connection, 'useConnection');
-		$reflection->setAccessible(true);
-		$reflection->setValue($this->connection, 'master');
+    /**
+     * deleteQuery
+     */
+    public function deleteQueryTest()
+    {
+        $reflection = new \ReflectionProperty($this->connection, 'useConnection');
+        $reflection->setAccessible(true);
+        $reflection->setValue($this->connection, 'master');
 
-		$testModel = new TestModel($this->connection, $this->container);
-		$this->compareValueLax(new DeleteQuery($this->connection, $this->container, 'Test\TestModel'), $testModel->deleteQuery());
-	}
+        $testModel = new TestModel($this->connection, $this->container);
+        $this->compareValueLax(new DeleteQuery($this->connection, $this->container, 'Test\TestModel'), $testModel->deleteQuery());
+    }
 
 }
 
@@ -153,23 +153,23 @@ use System\Database\BaseModel;
 
 class TestModel extends BaseModel
 {
-	/**
-	 * @model int
-	 */
-	protected $id;
+    /**
+     * @model int
+     */
+    protected $id;
 
-	public function getId()
-	{
-		return $this->id;
-	}
+    public function getId()
+    {
+        return $this->id;
+    }
 
-	public static function getTableName()
-	{
-		return 'test_tbl';
-	}
+    public static function getTableName()
+    {
+        return 'test_tbl';
+    }
 
-	public static function getPrimaryKeys()
-	{
-		return [];
-	}
+    public static function getPrimaryKeys()
+    {
+        return [];
+    }
 }

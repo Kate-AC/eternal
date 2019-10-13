@@ -8,99 +8,96 @@ namespace System\Util;
 
 class FilePathSearcher
 {
-	/**
-	 * @var string[]
-	 */
-	private $useDirList = [];
+    /**
+     * @var string[]
+     */
+    private $useDirList = [];
 
-	/**
-	 * @var string[]
-	 */
-	private $unUseDirList = [];
+    /**
+     * @var string[]
+     */
+    private $unUseDirList = [];
 
-	/**
-	 * @var string[]
-	 */ 
-	private $allFilePathList = [];
+    /**
+     * @var string[]
+     */ 
+    private $allFilePathList = [];
 
-	/**
-	 * 読み込むディレクトリをセットする
-	 *
-	 * @param string[] $array
-	 * @return self
-	 */
-	public function setUseDir(array $array = [])
-	{
-		$this->useDirList = $array;
+    /**
+     * 読み込むディレクトリをセットする
+     *
+     * @param string[] $array
+     * @return self
+     */
+    public function setUseDir(array $array = [])
+    {
+        $this->useDirList = $array;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * 読み飛ばすディレクトリをセットする
-	 *
-	 * @param string[] $array
-	 * @return self
-	 */
-	public function setUnUseDir(array $array = [])
-	{
-		$this->unUseDirList = $array;
+    /**
+     * 読み飛ばすディレクトリをセットする
+     *
+     * @param string[] $array
+     * @return self
+     */
+    public function setUnUseDir(array $array = [])
+    {
+        $this->unUseDirList = array_merge($array, ['.', '..']);
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * ディレクトリのパスからファイルパスのリストを取得
-	 *
-	 * @return string[]
-	 */
-	public function search()
-	{
-		foreach ($this->useDirList as $parentDir) {
-			$this->getRecursive($parentDir);
-		}
+    /**
+     * ディレクトリのパスからファイルパスのリストを取得
+     *
+     * @return string[]
+     */
+    public function search()
+    {
+        foreach ($this->useDirList as $parentDir) {
+            $this->getRecursive($parentDir);
+        }
 
-		return $this->allFilePathList;
-	}
+        return $this->allFilePathList;
+    }
 
-	/**
-	 * ファイルパスを再帰的に取得する
-	 *
-	 * @param string $parentDir
-	 */
-	private function getRecursive($parentDir) {
-		if (false !== ($openDir = opendir($parentDir))) {
-			while (false !== ($readFile = readdir($openDir))) {
-				if (in_array($readFile, $this->unUseDirList)) {
-					continue;
-				}
-				$fullPath = $parentDir . $readFile;
+    /**
+     * ファイルパスを再帰的に取得する
+     *
+     * @param string $parentDir
+     */
+    private function getRecursive($parentDir) {
+        if (false !== ($openDir = opendir($parentDir))) {
+            while (false !== ($readFile = readdir($openDir))) {
+                if (in_array($readFile, $this->unUseDirList)) {
+                    continue;
+                }
+                $fullPath = $parentDir . $readFile;
 
-				if (is_dir($fullPath)) {
-					$this->getRecursive($fullPath . '/');
-				} else {
-					//notice回避
-					$allFilePathList = $this->allFilePathList;
-					$allFilePathList[$fullPath] = $fullPath;
-					$this->allFilePathList = $allFilePathList;
-				}
-			}
-			closedir($openDir);
-		}
-	}
+                if (is_dir($fullPath)) {
+                    $this->getRecursive($fullPath . '/');
+                } else {
+                    $this->allFilePathList[$fullPath] = $fullPath;
+                }
+            }
+            closedir($openDir);
+        }
+    }
 
-	/**
-	 * 取得したファイルパスのリストを返す
-	 *
-	 * @return string[]
-	 */
-	public function getAllFilePathList()
-	{
-		//Closure使用時に$this->allFilePathListの中身が入っていても
-		//empty()がtrue判定を返すので要素数と比較している
-		if (0 === count($this->allFilePathList)) {
-			return $this->search();
-		}
-		return $this->allFilePathList;
-	}
+    /**
+     * 取得したファイルパスのリストを返す
+     *
+     * @return string[]
+     */
+    public function getAllFilePathList()
+    {
+        // Closure使用時に$this->allFilePathListの中身が入っていても
+        // empty()がtrue判定を返すので要素数と比較している
+        if (0 < count($this->allFilePathList)) {
+            return $this->allFilePathList;
+        }
+        return $this->search();
+    }
 }

@@ -7,22 +7,21 @@
 /* ディレクトリの設定 =================================================================== */
 
 
-define('CURRENT_DIR',    '');
-define('SOURCE_DIR',     __DIR__    . '/');
-define('FRAMEWORK_DIR',  SOURCE_DIR . 'System/');
-define('TEST_DIR',       SOURCE_DIR . 'Test/');
-define('APP_DIR',        SOURCE_DIR . 'src/App/');
-define('CONTROLLER_DIR', SOURCE_DIR . 'src/App/Controller/');
-define('MODEL_DIR',      SOURCE_DIR . 'src/App/Model/');
-define('PUBLIC_DIR',     SOURCE_DIR . 'public/');
-define('VIEW_DIR',       SOURCE_DIR . 'public/view/');
-define('CSS_DIR',        SOURCE_DIR . 'public/css/');
-define('JS_DIR',         SOURCE_DIR . 'public/js/');
+define('CURRENT_DIR',    __DIR__    . '/');
+define('SYSTEM_DIR',     CURRENT_DIR . 'System/');
+define('TEST_DIR',       CURRENT_DIR . 'Test/');
+define('SRC_DIR',        CURRENT_DIR . 'src/');
+define('CONTROLLER_DIR', CURRENT_DIR . 'src/App/Controller/');
+define('MODEL_DIR',      CURRENT_DIR . 'src/App/Model/');
+define('PUBLIC_DIR',     CURRENT_DIR . 'public/');
+define('VIEW_DIR',       CURRENT_DIR . 'public/view/');
+define('CSS_DIR',        CURRENT_DIR . 'public/css/');
+define('JS_DIR',         CURRENT_DIR . 'public/js/');
 
 
-/* テンプレートの拡張子の設定 =========================================================== */
+/* ビューの拡張子の設定 ================================================================= */
 
-const TEMPLATE_EXTENSION = 'php';
+const VIEW_EXTENSION = 'php';
 
 
 /* コントローラより先に実行されるクラスの使用設定 ======================================= */
@@ -33,16 +32,16 @@ const FIRST_PROCESS_CLASS = 'App\FirstProcess';
 
 /* ログファイルの設定 =================================================================== */
 
-define('ACTION_LOG_FILE',       SOURCE_DIR . 'log/action');
-define('SYSTEM_ERROR_LOG_FILE', SOURCE_DIR . 'log/system_error');
+define('ACTION_LOG_FILE',       CURRENT_DIR . 'log/action');
+define('SYSTEM_ERROR_LOG_FILE', CURRENT_DIR . 'log/system_error');
 
 const USE_SYSTEM_ERROR_LOG_FILE = false;
 
 
 /* 使用するデータベースの設定 =========================================================== */
 
-const DB_MYSQL    = 1;
-const DB_POSTGRES = 2;
+const DB_MYSQL    = 'mysql';
+const DB_POSTGRES = 'pgsql';
 
 define('USE_DB', DB_MYSQL);
 
@@ -51,30 +50,46 @@ define('USE_DB', DB_MYSQL);
 
 function getConnectionList()
 {
-	//slaveを追加する場合は「slave3」「slave4」のように追加して下さい
-	return [
-		'master' => [
-			'use'      => true,
-			'host'     => 'localhost',
-			'database' => 'postgres',
-			'user'     => 'postgres',
-			'password' => 'manager'
-		],
-		'slave1' => [
-			'use'      => false,
-			'host'     => 'localhost',
-			'database' => 'vega',
-			'user'     => 'slave',
-			'password' => 'slave'
-		],
-		'slave2' => [
-			'use'      => false,
-			'host'     => 'localhost',
-			'database' => 'vega',
-			'user'     => 'slave',
-			'password' => 'slave'
-		]
-	];
+    //slaveを追加する場合は「slave3」「slave4」のように追加して下さい
+    if ('production' === getenv('ENV_MODE')) {
+        return [
+            'master' => [
+                'use'      => true,
+                'host'     => 'localhost',
+                'port'     => 3306,
+                'database' => 'vega',
+                'user'     => 'root',
+                'password' => 'root'
+            ],
+            'slave1' => [
+                'use'      => false,
+                'host'     => 'localhost',
+                'port'     => 3306,
+                'database' => 'vega',
+                'user'     => 'slave',
+                'password' => 'slave'
+            ],
+            'slave2' => [
+                'use'      => false,
+                'host'     => 'localhost',
+                'port'     => 3306,
+                'database' => 'vega',
+                'user'     => 'slave',
+                'password' => 'slave'
+            ]
+        ];
+    } else {
+        return [
+            'master' => [
+                'use'      => true,
+                'host'     => 'localhost',
+                'port'     => 3306,
+                'database' => 'vega',
+                'user'     => 'root',
+                'password' => 'root'
+            ]
+        ];
+    }
 }
 
 
@@ -83,7 +98,7 @@ function getConnectionList()
 // 0: キャッシュを使用しない
 // 1: Memcache
 // 2: Memcached
-const SELECT_CACHE_TYPE = 0;
+const SELECT_CACHE_TYPE = 2;
 
 // 上記で1か2を選択した場合
 const MEMCACHE_HOST = '127.0.0.1';
@@ -101,11 +116,11 @@ const USE_DEBUG_MODE = true;
 
 function getAutoLoadDirs()
 {
-	return [
-		FRAMEWORK_DIR,
-		TEST_DIR,
-		PUBLIC_DIR
-	];
+    return [
+        SYSTEM_DIR,
+        SRC_DIR,
+        TEST_DIR
+    ];
 }
 
 
@@ -113,24 +128,6 @@ function getAutoLoadDirs()
 
 function getUnUseDirs()
 {
-	return [
-		'.',
-		'..',
-		'.git',
-		'setup'
-	];
+    return [];
 }
 
-
-/* テーブルの接頭辞・接尾辞を指定 ======================================================= */
-
-//テーブルで使用する接頭辞を記述して下さい。
-//テーブル名をモデル名に変換する際に必要です。
-
-function getTablePrefix()
-{
-	return [
-		'tbl',
-		'mst'
-	];
-}

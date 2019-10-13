@@ -14,84 +14,84 @@ use System\Log\SystemErrorLogger;
 
 class Dispatcher
 {
-	/**
-	 * @var Container
-	 */
-	private $container;
+    /**
+     * @var Container
+     */
+    private $container;
 
-	/**
-	 * @var ExtendProtocol
-	 */
-	private $extendProtocol;
+    /**
+     * @var ExtendProtocol
+     */
+    private $extendProtocol;
 
-	/**
-	 * @var Request
-	 */
-	private $request;
+    /**
+     * @var Request
+     */
+    private $request;
 
-	/**
-	 * @var SystemErrorLogger
-	 */
-	private $systemErrorLogger;
+    /**
+     * @var SystemErrorLogger
+     */
+    private $systemErrorLogger;
 
-	/**
-	 * コンストラクタ
-	 *
-	 * @param Container         $container
-	 * @param ExtendProtocol    $extendProtocol
-	 * @param Request           $request
-	 * @param SystemErrorLogger $systemErrorLogger
-	 */
-	public function __construct(
-		Container $container,
-		ExtendProtocol $extendProtocol,
-		Request $request,
-		SystemErrorLogger $systemErrorLogger
-	) {
-		$this->container         = $container;
-		$this->extendProtocol    = $extendProtocol;
-		$this->request           = $request;
-		$this->systemErrorLogger = $systemErrorLogger;
-	}
+    /**
+     * コンストラクタ
+     *
+     * @param Container         $container
+     * @param ExtendProtocol    $extendProtocol
+     * @param Request           $request
+     * @param SystemErrorLogger $systemErrorLogger
+     */
+    public function __construct(
+        Container $container,
+        ExtendProtocol $extendProtocol,
+        Request $request,
+        SystemErrorLogger $systemErrorLogger
+    ) {
+        $this->container         = $container;
+        $this->extendProtocol    = $extendProtocol;
+        $this->request           = $request;
+        $this->systemErrorLogger = $systemErrorLogger;
+    }
 
-	/**
-	 * 要求されたコントローラーとビューファイルに振り分ける
-	 */
-	public function start()
-	{
-		try {
-			if (true === USE_FIRST_PROCESS) {
-				$firstProcess = $this->container->get(FIRST_PROCESS_CLASS);
-				$firstProcess->execute();
-			}
+    /**
+     * 要求されたコントローラーとビューファイルに振り分ける
+     */
+    public function start()
+    {
+        try {
+            if (true === USE_FIRST_PROCESS) {
+                $firstProcess = $this->container->get(FIRST_PROCESS_CLASS);
+                $firstProcess->execute();
+            }
 
-			$nameSpace  = $this->request->getControllerNameSpace();
-			$controller = $this->container->get($nameSpace);
+            $nameSpace  = $this->request->getControllerNameSpace();
+            $controller = $this->container->get($nameSpace);
 
-			$controller->_initialize(
-				$this->container,
-				$this->extendProtocol,
-				$this->request
-			);
+            $controller->_initialize(
+                $this->container,
+                $this->extendProtocol,
+                $this->request
+            );
 
-			$controller->before();
-			$controller->_doMethod();
-			$controller->after();
+            $controller->before();
+            $controller->_doMethod();
+            $controller->after();
 
-			$controller->_checkNeedTemplate();
-			$controller->_responseJsonWhenUseJsonResponse();
-		} catch (\Exception $e) {
-			if (true === USE_SYSTEM_ERROR_LOG_FILE) {
-				$this->systemErrorLogger->write($e->getMessage());
-			}
+            $controller->_checkNeedTemplate();
+            $controller->_responseJsonWhenUseJsonResponse();
+        } catch (\Exception $e) {
+            if (true === USE_SYSTEM_ERROR_LOG_FILE) {
+                $this->systemErrorLogger->write($e->getMessage());
+            }
 
-			if (true === USE_DEBUG_MODE) {
-				var_dump($e->getMessage());
-				exit;
-			}
-			$this->extendProtocol->setModule(RenderModule::get())->start();
-			include_once(sprintf('%s://%s', ExtendProtocol::PROTOCOL, TEMPLATE_DIR . 'not_found.php'));
-			$this->extendProtocol->end();
-		}
-	}
+            if (true === USE_DEBUG_MODE) {
+                var_dump($e->getMessage());
+                exit;
+            }
+            $this->extendProtocol->setModule(RenderModule::get())->start();
+            include_once(sprintf('%s://%s', ExtendProtocol::PROTOCOL, TEMPLATE_DIR . 'not_found.php'));
+            $this->extendProtocol->end();
+        }
+    }
 }

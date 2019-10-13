@@ -3,9 +3,7 @@ empty:
 
 .PHONY: model
 model:
-	gcc -o script/model_creator.out script/model_creator.c
-	script/model_creator.out
-
+	php script/ModelMakeShell.php
 
 .PHONY: test
 test:

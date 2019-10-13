@@ -13,84 +13,81 @@ use Test\TestHelper;
 
 class TestTransactionFactory extends TestHelper
 {
-	/**
-	 * @var Parse
-	 */
-	private $transactionFactory;
+    /**
+     * @var Parse
+     */
+    private $transactionFactory;
 
-	/**
-	 * コンストラクタ
-	 */
-	public function __construct()
-	{
-		$this->common();
-	}
+    /**
+     * コンストラクタ
+     */
+    public function __construct()
+    {
+        $this->common();
+    }
 
-	/**
-	 * 共通処理
-	 */
-	private function common()
-	{
-		$transactionFactory = Mock::m('System\Database\TransactionFactory');
-		
-		$pdo = Mock::m()
-			->_setMethod('beginTransaction')
-			->_setArgs()
-			->_setReturn(1)
-			->e();
+    /**
+     * 共通処理
+     */
+    private function common()
+    {
+        $transactionFactory = Mock::m('System\Database\TransactionFactory');
 
-		$pdo->_setMethod('commit')
-			->_setArgs()
-			->_setReturn(1)
-			->e();
+        $pdo = Mock::m()
+            ->_setMethod('beginTransaction')
+            ->_setArgs()
+            ->_setReturn(1)
+            ->e();
 
-		$pdo->_setMethod('rollback')
-			->_setArgs()
-			->_setReturn(1)
-			->e();
+        $pdo->_setMethod('commit')
+            ->_setArgs()
+            ->_setReturn(1)
+            ->e();
 
-		$connection = Mock::m()->_setMethod('get')
-			->_setArgs('master')
-			->_setReturn($pdo)
-			->e();
+        $pdo->_setMethod('rollback')
+            ->_setArgs()
+            ->_setReturn(1)
+            ->e();
 
-		$transactionFactory->connection = $connection;
+        $connection = Mock::m()->_setMethod('get')
+            ->_setArgs('master')
+            ->_setReturn($pdo)
+            ->e();
 
-		$this->transactionFactory = $transactionFactory;
-	}
+        $transactionFactory->connection = $connection;
 
-	/**
-	 * __construct
-	 */
-	public function __constructTest()
-	{
-		$this->compareInstance('System\Database\TransactionFactory', new TransactionFactory(new Connection()));
-	}
+        $this->transactionFactory = $transactionFactory;
+    }
 
-	/**
-	 * beginTransaction
-	 */
-	public function beginTransactionTest()
-	{
-		$this->compareValue(1, $this->transactionFactory->beginTransaction());
-	}
+    /**
+     * __construct
+     */
+    public function __constructTest()
+    {
+        $this->compareInstance('System\Database\TransactionFactory', new TransactionFactory(new Connection()));
+    }
 
-	/**
-	 * commit
-	 */
-	public function commitTest()
-	{
-		$this->compareValue(1, $this->transactionFactory->commit());
-	}
+    /**
+     * beginTransaction
+     */
+    public function beginTransactionTest()
+    {
+        $this->compareValue(1, $this->transactionFactory->beginTransaction());
+    }
 
-	/**
-	 * rollBack
-	 */
-	public function rollBackTest()
-	{
-		$this->compareValue(1, $this->transactionFactory->rollBack());
-	}
+    /**
+     * commit
+     */
+    public function commitTest()
+    {
+        $this->compareValue(1, $this->transactionFactory->commit());
+    }
 
-
+    /**
+     * rollBack
+     */
+    public function rollBackTest()
+    {
+        $this->compareValue(1, $this->transactionFactory->rollBack());
+    }
 }
-

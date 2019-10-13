@@ -14,11 +14,11 @@ use System\Exception\ControllerException;
 
 class TestControllerException extends TestHelper
 {
-	/**
-	 * __construct
-	 */
-	public function __constructTest()
-	{
-		$this->compareInstance('System\Exception\ControllerException', new ControllerException('hoge'));
-	}
+    /**
+     * __construct
+     */
+    public function __constructTest()
+    {
+        $this->compareInstance('System\Exception\ControllerException', new ControllerException('hoge'));
+    }
 }

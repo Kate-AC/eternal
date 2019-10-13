@@ -4,18 +4,19 @@
  * 初動に必要なファイルを宣言する 
  */
 
-require(SOURCE_DIR    . 'vendor/autoload.php');
-require(FRAMEWORK_DIR . 'Core/AutoLoader.php');
-require(FRAMEWORK_DIR . 'Core/Extend/ExtendProtocol.php');
-require(FRAMEWORK_DIR . 'Core/Extend/Module/AbstractModule.php');
-require(FRAMEWORK_DIR . 'Core/Extend/Module/RenderModule.php');
-require(FRAMEWORK_DIR . 'Log/AbstractLogger.php');
-require(FRAMEWORK_DIR . 'Log/SystemErrorLogger.php');
-require(FRAMEWORK_DIR . 'Exception/AbstractException.php');
-require(FRAMEWORK_DIR . 'Exception/SystemException.php');
-require(FRAMEWORK_DIR . 'NotClass/DebugFunction.php');
-require(FRAMEWORK_DIR . 'Util/FilePathSearcher.php');
-require(FRAMEWORK_DIR . 'Util/StringOperator.php');
+require(CURRENT_DIR . 'vendor/autoload.php');
+require(SYSTEM_DIR  . 'Core/AutoLoader.php');
+require(SYSTEM_DIR  . 'Core/Extend/ExtendProtocol.php');
+require(SYSTEM_DIR  . 'Core/Extend/Module/AbstractModule.php');
+require(SYSTEM_DIR  . 'Core/Extend/Module/RenderModule.php');
+require(SYSTEM_DIR  . 'Log/AbstractLogger.php');
+require(SYSTEM_DIR  . 'Log/SystemErrorLogger.php');
+require(SYSTEM_DIR  . 'Exception/AbstractException.php');
+require(SYSTEM_DIR  . 'Exception/SystemException.php');
+require(SYSTEM_DIR  . 'GlobalFunction/DebugFunction.php');
+require(SYSTEM_DIR  . 'Util/FilePathSearcher.php');
+require(SYSTEM_DIR  . 'Util/Kit.php');
+require(SYSTEM_DIR  . 'Util/Str.php');
 
 use System\Core\AutoLoader;
 use System\Core\Cache;

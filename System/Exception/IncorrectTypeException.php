@@ -8,18 +8,18 @@ namespace System\Exception;
 
 class IncorrectTypeException extends AbstractException
 {
-	/**
-	 * @var string
-	 */
-	protected $errorType = '型の不一致';
+    /**
+     * @var string
+     */
+    protected $errorType = '型の不一致';
 
-	/**
-	 * コンストラクタ
-	 *
-	 * @param string $message
-	 */
-	public function __construct($message)
-	{
-		parent::__construct($message);
-	}
+    /**
+     * コンストラクタ
+     *
+     * @param string $message
+     */
+    public function __construct($message)
+    {
+        parent::__construct($message);
+    }
 }

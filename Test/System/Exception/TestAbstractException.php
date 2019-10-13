@@ -15,26 +15,26 @@ use System\Exception\HogeException;
 
 class TestAbstractException extends TestHelper
 {
-	/**
-	 * __construct
-	 */
-	public function __constructTest()
-	{
-		$errorType     = 'エラー';
-		$hogeException = new HogeException('hoge');
-		$this->compareInstance('System\Exception\HogeException', $hogeException, 'コンストラクタ');
-		$this->compareValue($errorType, $hogeException->getErrorType(), '継承先のエラータイプの取得');
-	}
+    /**
+     * __construct
+     */
+    public function __constructTest()
+    {
+        $errorType     = 'エラー';
+        $hogeException = new HogeException('hoge');
+        $this->compareInstance('System\Exception\HogeException', $hogeException, 'コンストラクタ');
+        $this->compareValue($errorType, $hogeException->getErrorType(), '継承先のエラータイプの取得');
+    }
 }
 
 namespace System\Exception;
 
 class HogeException extends AbstractException
 {
-	protected $errorType = 'エラー';
+    protected $errorType = 'エラー';
 
-	public function __construct($message)
-	{
-		parent::__construct($message);
-	}
+    public function __construct($message)
+    {
+        parent::__construct($message);
+    }
 }

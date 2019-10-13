@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="ja">
-  <head>
-    <meta charset="UTF-8">
-    <title></title>
-  </head>
-  <body>
-    <div>Hello World!</div>
-  </body>
-</html>
+{% parent('layout') %}
+
+{% title %}Hello World!{% /title %}
+
+{% body %}
+  <div>
+    <span style="font-weight: bold;">Hello World!</span>
+  </div>
+{% /body %}
+

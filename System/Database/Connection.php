@@ -10,140 +10,125 @@ use System\Exception\DatabaseException;
 
 class Connection
 {
-	/**
-	 * @var \PDO[]
-	 */
-	private static $pdo = [];
+    /**
+     * @var \PDO[]
+     */
+    private static $pdo = [];
 
-	/**
-	 * @var string
-	 */
-	private $useConnection;
+    /**
+     * @var string
+     */
+    private $useConnection;
 
-	/**
-	 * コネクションを生成する
-	 */
-	public function start()
-	{
-		$connectionList = $this->getConnectionList();
-		$slaveList      = [];
+    /**
+     * コネクションを生成する
+     */
+    public function start()
+    {
+        $connectionList = $this->getConnectionList();
+        $slaveList      = [];
 
-		foreach ($connectionList as $key => $connection) {
-			if (false === $connection['use']) {
-				if (array_key_exists($key, self::$pdo)) {
-					unset(self::$pdo[$key]);
-				}
-				continue;
-			}
+        foreach ($connectionList as $key => $connection) {
+            if (false === $connection['use']) {
+                if (array_key_exists($key, self::$pdo)) {
+                    unset(self::$pdo[$key]);
+                }
+                continue;
+            }
 
-			if (!isset(self::$pdo[$key])) {
-				switch (USE_DB) {
-					default:
-					case DB_MYSQL:
-						$db = new \PDO(
-							sprintf('mysql:host=%s; dbname=%s; charset=utf8;',
-								$connection['host'],
-								$connection['database']
-							),
-							$connection['user'],
-							$connection['password'],
-							[
-								\PDO::ATTR_PERSISTENT => true
-							]
-						);
-						break;
-					case DB_POSTGRES:
-						$db = new \PDO(
-							sprintf('pgsql:host=%s; dbname=%s;',
-								$connection['host'],
-								$connection['database']
-							),
-							$connection['user'],
-							$connection['password'],
-							[
-								\PDO::ATTR_PERSISTENT => true
-							]
-						);
-						break;
-				}
+            if (!isset(self::$pdo[$key])) {
+                $db = new \PDO(
+                    sprintf('%s:host=%s; port=%s; dbname=%s; charset=utf8;',
+                        USE_DB,
+                        $connection['host'],
+                        $connection['port'],
+                        $connection['database']
+                    ),
+                    $connection['user'],
+                    $connection['password'],
+                    [
+                        \PDO::ATTR_PERSISTENT => true
+                    ]
+                );
 
-				self::$pdo[$key] = $db;
-				self::$pdo[$key]->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-			}
+                self::$pdo[$key] = $db;
+                self::$pdo[$key]->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            }
 
-			if ('master' !== $key) {
-				$slaveList[$key] = self::$pdo[$key];
-			}
-		}
+            if ('master' !== $key) {
+                $slaveList[$key] = self::$pdo[$key];
+            }
+        }
 
-		if (empty(self::$pdo)) {
-			throw new DatabaseException(implode("\r\n", [
-				'接続が存在しません',
-				'DBが存在しないか、ConfigファイルのMySQ設定でuseがtrueになっていない可能性があります'
-			]));
-		}
+        if (empty(self::$pdo)) {
+            throw new DatabaseException(implode("\r\n", [
+                '接続が存在しません',
+                'DBが存在しないか、データベースの設定でuseがtrueになっていない可能性があります'
+            ]));
+        }
 
-		//slaveが存在しない場合はmasterを参照する
-		if (empty($slaveList)) {
-			$this->useConnection = 'master';
-		} else {
-			$this->useConnection = array_rand($slaveList);
-		}
-	}
+        //slaveが存在しない場合はmasterを参照する
+        if (empty($slaveList)) {
+            $this->useConnection = 'master';
+        } else {
+            $this->useConnection = array_rand($slaveList);
+        }
+    }
 
-	/**
-	 * 設定ファイルからコネクションの一覧を取得する
-	 */
-	private function getConnectionList()
-	{
-		return getConnectionList();
-	}
+    /**
+     * 設定ファイルからコネクションの一覧を取得する
+     */
+    private function getConnectionList()
+    {
+        return getConnectionList();
+    }
 
-	/**
-	 * 指定したキーのPDOを返す
-	 *
-	 * @param string $key
-	 * @return \PDO
-	 */
-	public function get($key)
-	{
-		if (empty(self::$pdo)) {
-			$this->start();
-		}
+    /**
+     * 指定したキーのPDOを返す
+     *
+     * @param string $key
+     * @return \PDO
+     */
+    public function get($key)
+    {
+        if (empty(self::$pdo)) {
+            $this->start();
+        }
 
-		if (!isset(self::$pdo[$key])) {
-			throw new DatabaseException(sprintf('存在しない接続を指定しました(%s)', $key));
-		}
+        if (!isset(self::$pdo[$key])) {
+            throw new DatabaseException(sprintf('存在しない接続を指定しました(%s)', $key));
+        }
 
-		$this->useConnection = $key;
-		return self::$pdo[$key];
-	}
+        $this->useConnection = $key;
+        return self::$pdo[$key];
+    }
 
-	/**
-	 * 自動でPDOを返す
-	 *
-	 * @return \PDO
-	 */
-	public function getAuto()
-	{
-		if (is_null($this->useConnection)) {
-			$this->start();
-		}
+    /**
+     * 自動でPDOを返す
+     *
+     * @return \PDO
+     */
+    public function getAuto()
+    {
+        if (is_null($this->useConnection)) {
+            $this->start();
+        }
 
-		if (!isset(self::$pdo[$this->useConnection])) {
-			$this->start();
-		}
+        if (!isset(self::$pdo[$this->useConnection])) {
+            $this->start();
+        }
 
-		return self::$pdo[$this->useConnection];
-	}
+        return self::$pdo[$this->useConnection];
+    }
 
-	/**
-	 * 使用する接続を返す
-	 *
-	 * @return string
-	 */
-	public function getUseConnection()
-	{
-		return $this->useConnection;
-	}
+    /**
+     * 使用する接続を返す
+     *
+     * @return string
+     */
+    public function getUseConnection()
+    {
+        return $this->useConnection;
+    }
 }
+
