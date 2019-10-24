@@ -6,7 +6,6 @@
 
 namespace Test\System\Log;
 
-use Test\Mock;
 use Test\TestHelper;
 use System\Log\ActionLogger;
 

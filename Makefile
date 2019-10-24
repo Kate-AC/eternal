@@ -15,13 +15,5 @@ init:
 	php composer.php
 	rm composer.php
 	composer install
-	npm install --save-dev \
-		webpack \
-		webpack-cli \
-		node-sass \
-		sass-loader \
-		css-loader \
-		npm-watch \
-		vue
+	npm install
 	npm run build
-

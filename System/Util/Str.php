@@ -56,17 +56,5 @@ class Str
         $camel = self::snakeToCamel($column);
         return sprintf('set%s', ucfirst($camel));
     }
-
-    /**
-     * ファイルパスから名前空間に変換する
-     *
-     * @param string $filePath
-     * @return string
-     */
-    public static function pathToNameSpace($filePath)
-    {
-        $nameSpace = str_replace(['.php', SRC_DIR], '', $filePath);
-        return str_replace('/', '\\', $nameSpace);
-    }
 }
 

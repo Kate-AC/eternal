@@ -16,7 +16,7 @@ class FilePathSearcher
     /**
      * @var string[]
      */
-    private $unUseDirList = [];
+    private $unUseDirList = ['.', '..'];
 
     /**
      * @var string[]
@@ -44,7 +44,7 @@ class FilePathSearcher
      */
     public function setUnUseDir(array $array = [])
     {
-        $this->unUseDirList = array_merge($array, ['.', '..']);
+        $this->unUseDirList = array_merge($array, $this->unUseDirList);
 
         return $this;
     }

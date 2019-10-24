@@ -6,9 +6,9 @@
 
 namespace Test\System\Database\Query;
 
+use Phantom\Phantom;
 use System\Database\Query\UpdateQuery;
 use System\Exception\DatabaseException;
-use Test\Mock;
 use Test\TestHelper;
 
 class TestUpdateQuery extends TestHelper
@@ -18,27 +18,22 @@ class TestUpdateQuery extends TestHelper
      */
     public function createTest()
     {
-        $updateQuery = Mock::m('System\Database\Query\UpdateQuery');
-        $updateQuery
-            ->_setMethod('getExplainLine')
-            ->_setArgs()
-            ->_setReturn('A')
-            ->e();
+        $updateQuery = Phantom::m('System\Database\Query\UpdateQuery')
+            ->setMethod('getExplainLine')
+            ->setReturn('A')
+            ->exec();
 
         $updateQuery->tableName = 'B';
 
         $updateQuery
-            ->_setMethod('getSetLine')
-            ->_setArgs()
-            ->_setReturn('C')
-            ->e();
-
+            ->setMethod('getSetLine')
+            ->setReturn('C')
+            ->exec();
 
         $updateQuery
-            ->_setMethod('getConditionLine')
-            ->_setArgs()
-            ->_setReturn('D')
-            ->e();
+            ->setMethod('getWhereLine')
+            ->setReturn('D')
+            ->exec();
 
         $this->compareValue('A UPDATE B SET C D', $updateQuery->create());
     }
@@ -48,46 +43,46 @@ class TestUpdateQuery extends TestHelper
      */
     public function updateTest()
     {
-        $updateQuery = Mock::m('System\Database\Query\UpdateQuery');
+        $updateQuery = Phantom::m('System\Database\Query\UpdateQuery');
         $query       = 'query';
         $placeholder = 'placeholder';
 
         $updateQuery
-            ->_setMethod('create')
-            ->_setArgs()
-            ->_setReturn($query)
-            ->e();
+            ->setMethod('create')
+            ->setArgs()
+            ->setReturn($query)
+            ->exec();
 
         $updateQuery->placeholder = $placeholder;
 
-        $prepare = Mock::m()
-            ->_setMethod('execute')
-            ->_setArgs($placeholder)
-            ->_setReturn(null)
-            ->e();
+        $prepare = Phantom::m()
+            ->setMethod('execute')
+            ->setArgs($placeholder)
+            ->setReturn(null)
+            ->exec();
 
         $prepare
-            ->_setMethod('rowCount')
-            ->_setArgs()
-            ->_setReturn(100)
-            ->e();
+            ->setMethod('rowCount')
+            ->setArgs()
+            ->setReturn(100)
+            ->exec();
 
-        $pdo = Mock::m()
-            ->_setMethod('inTransaction')
-            ->_setArgs()
-            ->_setReturn(true)
-            ->e();
+        $pdo = Phantom::m()
+            ->setMethod('inTransaction')
+            ->setArgs()
+            ->setReturn(true)
+            ->exec();
 
-        $pdo->_setMethod('prepare')
-            ->_setArgs($query)
-            ->_setReturn($prepare)
-            ->e();
+        $pdo->setMethod('prepare')
+            ->setArgs($query)
+            ->setReturn($prepare)
+            ->exec();
 
-        $connection = Mock::m('System\Database\Connection')
-            ->_setMethod('get')
-            ->_setArgs('master')
-            ->_setReturn($pdo)
-            ->e();
+        $connection = Phantom::m('System\Database\Connection')
+            ->setMethod('get')
+            ->setArgs('master')
+            ->setReturn($pdo)
+            ->exec();
 
         $updateQuery->connection = $connection;
 
@@ -99,19 +94,19 @@ class TestUpdateQuery extends TestHelper
      */
     public function updateTestWhenExcepion()
     {
-        $updateQuery = Mock::m('System\Database\Query\UpdateQuery');
+        $updateQuery = Phantom::m('System\Database\Query\UpdateQuery');
 
-        $pdo = Mock::m()
-            ->_setMethod('inTransaction')
-            ->_setArgs()
-            ->_setReturn(false)
-            ->e();
+        $pdo = Phantom::m()
+            ->setMethod('inTransaction')
+            ->setArgs()
+            ->setReturn(false)
+            ->exec();
 
-        $connection = Mock::m('System\Database\Connection')
-            ->_setMethod('get')
-            ->_setArgs('master')
-            ->_setReturn($pdo)
-            ->e();
+        $connection = Phantom::m('System\Database\Connection')
+            ->setMethod('get')
+            ->setArgs('master')
+            ->setReturn($pdo)
+            ->exec();
 
         $updateQuery->connection = $connection;
 
@@ -144,6 +139,6 @@ class TestUpdateQuery extends TestHelper
         $method->setAccessible(true);
         $result = $method->invoke($updateQuery);
 
-        $this->compareValue('hoge = 1, fuga = "aaa", piyo = "2017-10-10 00:00:00", mosu = NULL', $result);
+        $this->compareValue("hoge = 1, fuga = 'aaa', piyo = '2017-10-10 00:00:00', mosu = NULL", $result);
     }
 }

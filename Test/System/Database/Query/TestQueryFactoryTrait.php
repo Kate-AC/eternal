@@ -8,7 +8,7 @@ namespace Test\System\Database\Query;
 
 use System\Database\Collect;
 use System\Exception\DatabaseException;
-use Test\Mock;
+use Phantom\Phantom;
 use Test\TestHelper;
 
 use Test\TestModel;
@@ -89,32 +89,32 @@ class TestQueryFactoryTrait extends TestHelper
      */
     public function unionTest()
     {
-        $query = Mock::m('System\Database\Query\SelectQuery');
-        $query->asSelf = 'hoge_tbl';
+        $query = Phantom::m('System\Database\Query\SelectQuery');
+        $query->asSelf = 'hoge';
 
         $dependencyList = [
-            'hoge_tbl' => ['fuga_tbl', 'piyo_tbl'],
-            'fuga_tbl' => ['mosu_tbl'],
-            'mosu_tbl' => [],
-            'piyo_tbl' => []
+            'hoge' => ['fuga', 'piyo'],
+            'fuga' => ['mosu'],
+            'mosu' => [],
+            'piyo' => []
         ];
 
         $entityList = [
-            'hoge_tbl' => new \stdClass(),
-            'fuga_tbl' => new \stdClass(),
-            'mosu_tbl' => new \stdClass(),
-            'piyo_tbl' => new \stdClass()
+            'hoge' => new \stdClass(),
+            'fuga' => new \stdClass(),
+            'mosu' => new \stdClass(),
+            'piyo' => new \stdClass()
         ];
 
-        $entityList['hoge_tbl']->name = 'Hoge';
-        $entityList['fuga_tbl']->name = 'Fuga';
-        $entityList['mosu_tbl']->name = 'Mosu';
-        $entityList['piyo_tbl']->name = 'Piyo';
+        $entityList['hoge']->name = 'Hoge';
+        $entityList['fuga']->name = 'Fuga';
+        $entityList['mosu']->name = 'Mosu';
+        $entityList['piyo']->name = 'Piyo';
 
-        $created = $entityList['hoge_tbl'];
-        $created->Fuga = $entityList['fuga_tbl'];
-        $created->Piyo = $entityList['piyo_tbl'];
-        $created->Fuga->Mosu = $entityList['mosu_tbl'];
+        $created = $entityList['hoge'];
+        $created->Fuga = $entityList['fuga'];
+        $created->Piyo = $entityList['piyo'];
+        $created->Fuga->Mosu = $entityList['mosu'];
 
         $this->compareValue($created, $query->union($dependencyList, $entityList));
     }
@@ -124,71 +124,85 @@ class TestQueryFactoryTrait extends TestHelper
      */
     public function uniteTest()
     {
-        $query = Mock::m('System\Database\Query\SelectQuery');
-        $query->asSelf = 'hoge_tbl';
+        $query = Phantom::m('System\Database\Query\SelectQuery');
+        $query->asSelf = 'hoge';
 
-        $query->_setMethod('makeDependencyList')
-            ->_setArgs()
-            ->_setReturn()
-            ->e();
-
-        $container = Mock::m('System\Core\Di\Container');
-        $container->_setMethod('getByTable')
-            ->_setArgs('hoge_tbl')
-            ->_setReturn('\Test\Query\TestModel')
-            ->e();
-        $container->_setMethod('getByTable')
-            ->_setArgs('fuga_tbl')
-            ->_setReturn('\Test\Query\TestModel')
-            ->e();
-        $container->_setMethod('getByTable')
-            ->_setArgs('piyo_tbl')
-            ->_setReturn('\Test\Query\TestModel')
-            ->e();
+        $container = Phantom::m('System\Core\Di\Container')
+            ->setMethod('getByTable')
+            ->setArgs('hoge')
+            ->setReturn('\Test\TestModel')
+            ->exec();
+        $container->setMethod('getByTable')
+            ->setArgs('fuga')
+            ->setReturn('\Test\TestModel')
+            ->exec();
+        $container->setMethod('getByTable')
+            ->setArgs('piyo')
+            ->setReturn('\Test\TestModel')
+            ->exec();
         $query->container = $container;
 
         $query->tableAsName = [
-            'hoge_tbl' => 'hoge_tbl',
-            'fuga_tbl' => 'fuga_tbl',
-            'piyo_tbl' => 'piyo_tbl'
+            'hoge' => 'hoge',
+            'fuga' => 'fuga',
+            'piyo' => 'piyo'
         ];
 
-        $query->dependencyList = [
-            'hoge_tbl' => [
-                'fuga_tbl',
-                'piyo_tbl'
+        $query->formatedJoin = [
+            [
+                'join' => [
+                    'table' => 'fuga',
+                    'as'    => null
+                ],
+                'on' => [
+                    [
+                        'a' => ['table' => 'fuga', 'column' => 'id'],
+                        'b' => ['table' => 'hoge', 'column' => 'id']
+                    ]
+                ]
             ],
-            'fuga_tbl' => [],
-            'piyo_tbl' => []
+            [
+                'join' => [
+                    'table' => 'piyo',
+                    'as'    => null
+                ],
+                'on' => [
+                    [
+                        'a' => ['table' => 'piyo', 'column' => 'id'],
+                        'b' => ['table' => 'hoge', 'column' => 'id']
+                    ]
+                ]
+            ]
         ];
 
         $resultList = [
             [
-                '_collect___COUNT(piyo_tbl.id)' => 100,
-                'hoge_tbl___id'      => '2',
-                'fuga_tbl___id'      => '22',
-                'fuga_tbl___name'    => 'AAA',
-                'piyo_tbl___name'    => 'aaa'
+                '_collect___COUNT(piyo.id)' => 100,
+                'hoge___id'   => '2',
+                'fuga___id'   => '2',
+                'fuga___name' => 'AAA',
+                'piyo___id'   => '2',
+                'piyo___name' => 'aaa'
             ],
             [
-                '_collect___COUNT(piyo_tbl.id)' => 200,
-                'hoge_tbl___id'      => '3',
-                'fuga_tbl___id'      => '33',
-                'fuga_tbl___name'    => 'BBB',
-                'piyo_tbl___name'    => 'bbb'
+                '_collect___COUNT(piyo.id)' => 200,
+                'hoge___id'   => '3',
+                'fuga___id'   => '3',
+                'fuga___name' => 'BBB',
+                'piyo___id'   => '3',
+                'piyo___name' => 'bbb'
             ]
         ];
 
-        $hogeEntity = \Test\Query\TestModel::make([]);
-        $fugaEntity = \Test\Query\TestModel::make([]);
-        $piyoEntity = \Test\Query\TestModel::make([]);
+        $created          = TestModel::make(['id' => '2']);
+        $created->Fuga    = TestModel::make(['id' => '2', 'name' => 'AAA']);
+        $created->Piyo    = TestModel::make(['id' => '2', 'name' => 'aaa']);
+        $created->Collect = new Collect(['COUNT(piyo.id)' => 100]);
 
-        $created = $hogeEntity;
-        $created->Fuga = $fugaEntity;
-        $created->Piyo = $piyoEntity;
-        $created2 = clone $created;
-        $created->Collect  = new Collect(['COUNT(piyo_tbl.id)' => 100]);
-        $created2->Collect = new Collect(['COUNT(piyo_tbl.id)' => 200]);
+        $created2          = TestModel::make(['id' => '3']);
+        $created2->Fuga    = TestModel::make(['id' => '3', 'name' => 'BBB']);
+        $created2->Piyo    = TestModel::make(['id' => '3', 'name' => 'bbb']);
+        $created2->Collect = new Collect(['COUNT(piyo.id)' => 200]);
 
         $this->compareValueLax([$created, $created2], $query->unite($resultList));
 
@@ -200,7 +214,7 @@ class TestQueryFactoryTrait extends TestHelper
         }
 
         try {
-            $query->unite($resultList, 'id');
+            $query->unite($resultList, 'name');
             $this->throwError('例外が発生すべき箇所で発生していない');
         } catch (DatabaseException $e) {
             $this->compareException('添え字に使用できない', $e, 'nullの結果を返すkeyを指定');
@@ -212,28 +226,28 @@ class TestQueryFactoryTrait extends TestHelper
      */
     public function unionArrayTest()
     {
-        $query = Mock::m('System\Database\Query\SelectQuery');
-        $query->asSelf = 'hoge_tbl';
+        $query = Phantom::m('System\Database\Query\SelectQuery');
+        $query->asSelf = 'hoge';
 
         $dependencyList = [
-            'hoge_tbl' => ['fuga_tbl', 'piyo_tbl'],
-            'fuga_tbl' => ['mosu_tbl'],
-            'mosu_tbl' => [],
-            'piyo_tbl' => []
+            'hoge' => ['fuga', 'piyo'],
+            'fuga' => ['mosu'],
+            'mosu' => [],
+            'piyo' => []
         ];
 
         $classList = [
-            'hoge_tbl' => ['Hoge' => []],
-            'fuga_tbl' => ['Fuga' => []],
-            'mosu_tbl' => ['Mosu' => []],
-            'piyo_tbl' => ['Piyo' => []]
+            'hoge' => ['Hoge' => []],
+            'fuga' => ['Fuga' => []],
+            'mosu' => ['Mosu' => []],
+            'piyo' => ['Piyo' => []]
         ];
 
-        $created = $classList['hoge_tbl'];
+        $created = $classList['hoge'];
 
-        $created['Hoge']['Fuga']         = $classList['fuga_tbl']['Fuga'];
-        $created['Hoge']['Piyo']         = $classList['piyo_tbl']['Piyo'];
-        $created['Hoge']['Fuga']['Mosu'] = $classList['mosu_tbl']['Mosu'];
+        $created['Hoge']['Fuga']         = $classList['fuga']['Fuga'];
+        $created['Hoge']['Piyo']         = $classList['piyo']['Piyo'];
+        $created['Hoge']['Fuga']['Mosu'] = $classList['mosu']['Mosu'];
 
         $this->compareValue($created, $query->unionArray($dependencyList, $classList));
     }
@@ -243,56 +257,71 @@ class TestQueryFactoryTrait extends TestHelper
      */
     public function uniteArrayTest()
     {
-        $query = Mock::m('System\Database\Query\SelectQuery');
-        $query->asSelf = 'hoge_tbl';
-
-        $query->_setMethod('makeDependencyList')
-            ->_setArgs()
-            ->_setReturn()
-            ->e();
+        $query = Phantom::m('System\Database\Query\SelectQuery');
+        $query->asSelf = 'hoge';
 
         $query->tableAsName = [
-            'hoge_tbl' => 'hoge_tbl',
-            'fuga_tbl' => 'fuga_tbl',
-            'piyo_tbl' => 'piyo_tbl'
+            'hoge' => 'hoge',
+            'fuga' => 'fuga',
+            'piyo' => 'piyo'
         ];
 
-        $query->dependencyList = [
-            'hoge_tbl' => [
-                'fuga_tbl',
-                'piyo_tbl'
+        $query->formatedJoin = [
+            [
+                'join' => [
+                    'table' => 'fuga',
+                    'as'    => null
+                ],
+                'on' => [
+                    [
+                        'a' => ['table' => 'fuga', 'column' => 'id'],
+                        'b' => ['table' => 'hoge', 'column' => 'id']
+                    ]
+                ]
             ],
-            'fuga_tbl' => [],
-            'piyo_tbl' => []
+            [
+                'join' => [
+                    'table' => 'piyo',
+                    'as'    => null
+                ],
+                'on' => [
+                    [
+                        'a' => ['table' => 'piyo', 'column' => 'id'],
+                        'b' => ['table' => 'hoge', 'column' => 'id']
+                    ]
+                ]
+            ]
         ];
 
         $resultList = [
             [
-                'hoge_tbl___id'      => '2',
-                'hoge_tbl___user_id' => null,
-                'fuga_tbl___id'      => '22',
-                'fuga_tbl___name'    => 'AAA',
-                'piyo_tbl___name'    => 'aaa',
-                'piyo_tbl___POINT(1.0 2.0)' => 'POINT(1.0 2.0)'
+                'hoge___id'   => '2',
+                'hoge___name' => null,
+                'fuga___id'   => '2',
+                'fuga___name' => 'AAA',
+                'piyo___id'   => '2',
+                'piyo___name' => 'aaa',
+                'piyo___POINT(1.0 2.0)' => 'POINT(1.0 2.0)'
             ],
             [
-                'hoge_tbl___id'      => '3',
-                'hoge_tbl___user_id' => null,
-                'fuga_tbl___id'      => '33',
-                'fuga_tbl___name'    => 'BBB',
-                'piyo_tbl___name'    => 'bbb',
-                'piyo_tbl___POINT(3.0 4.0)' => 'POINT(3.0 4.0)'
+                'hoge___id'   => '3',
+                'hoge___name' => null,
+                'fuga___id'   => '3',
+                'fuga___name' => 'BBB',
+                'piyo___id'   => '3',
+                'piyo___name' => 'bbb',
+                'piyo___POINT(3.0 4.0)' => 'POINT(3.0 4.0)'
             ]
         ];
 
-        $created = ['Hoge' => ['id' => '2', 'user_id' => null]];
-        $created['Hoge']['Fuga'] = ['id' => '22', 'name' => 'AAA'];
-        $created['Hoge']['Piyo'] = ['name' => 'aaa'];
+        $created = ['Hoge' => ['id' => '2', 'name' => null]];
+        $created['Hoge']['Fuga'] = ['id' => '2', 'name' => 'AAA'];
+        $created['Hoge']['Piyo'] = ['id' => '2', 'name' => 'aaa'];
         $created['Hoge']['Piyo']['POINT(1.0 2.0)'] = ['Point' => ['lng' => '1.0', 'lat' => '2.0']];
 
-        $created2 = ['Hoge' => ['id' => '3', 'user_id' => null]];
-        $created2['Hoge']['Fuga'] = ['id' => '33', 'name' => 'BBB'];
-        $created2['Hoge']['Piyo'] = ['name' => 'bbb'];
+        $created2 = ['Hoge' => ['id' => '3', 'name' => null]];
+        $created2['Hoge']['Fuga'] = ['id' => '3', 'name' => 'BBB'];
+        $created2['Hoge']['Piyo'] = ['id' => '3', 'name' => 'bbb'];
         $created2['Hoge']['Piyo']['POINT(3.0 4.0)'] = ['Point' => ['lng' => '3.0', 'lat' => '4.0']];
 
         $this->compareValue([$created, $created2], $query->uniteArray($resultList), 'key未指定');
@@ -306,7 +335,7 @@ class TestQueryFactoryTrait extends TestHelper
         }
 
         try {
-            $query->uniteArray($resultList, 'user_id');
+            $query->uniteArray($resultList, 'name');
             $this->throwError('例外が発生すべき箇所で発生していない');
         } catch (DatabaseException $e) {
             $this->compareException('nullの値が存在します', $e, 'nullの結果を返すkeyを指定');
@@ -314,17 +343,20 @@ class TestQueryFactoryTrait extends TestHelper
     }
 }
 
-namespace Test\Query;
+namespace Test;
 
-use System\Database\BaseModel;
+use System\Database\Model;
 
-class TestModel extends BaseModel
+class TestModel extends Model
 {
-    private $id;
+    protected $id;
+
+    protected $name;
 
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
     }
 
     public function getId()
@@ -332,8 +364,34 @@ class TestModel extends BaseModel
         return $this->id;
     }
 
+    public function setName($name)
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
     public static function make(array $properties)
     {
-        return new static();
+        if (isset($properties['id'])) {
+            if (is_numeric($properties['id'])) {
+                $properties['id'] = intval($properties['id']);
+            }
+        } else {
+            $properties['id'] = null;
+        }
+
+        if (isset($properties['name'])) {
+            $properties['name'] = strval($properties['name']);
+        } else {
+            $properties['name'] = null;
+        }
+
+        $instance = new static();
+        return $instance($properties);
     }
 }

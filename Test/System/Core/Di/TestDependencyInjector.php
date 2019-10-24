@@ -10,7 +10,7 @@ use System\Core\Cache;
 use System\Core\Di\DependencyInjector;
 use System\Core\Di\DependencyDto;
 use System\Exception\DiException;
-use Test\Mock;
+use Phantom\Phantom;
 use Test\TestHelper;
 
 use App\Model\Mosu;
@@ -42,18 +42,19 @@ class TestDependencyInjector extends TestHelper
     private function common()
     {
         $mosu = new Mosu();
-        $mock = Mock::m()->_setMethod('setCache')
-            ->_setArgs('App\Model\Mosu', $mosu)
-            ->_setReturn(null)
-            ->e();
+        $mock = Phantom::m()
+            ->setMethod('setCache')
+            ->setArgs('App\Model\Mosu', $mosu)
+            ->setReturn(null)
+            ->exec();
 
         $piyo = new Piyo($mosu);
-        $mock->_setMethod('setCache')
-            ->_setArgs('Test\Piyo', $piyo)
-            ->_setReturn(null)
-            ->e();
+        $mock->setMethod('setCache')
+            ->setArgs('Test\Piyo', $piyo)
+            ->setReturn(null)
+            ->exec();
 
-        $this->dependencyInjector = Mock::m('System\Core\Di\DependencyInjector');
+        $this->dependencyInjector = Phantom::m('System\Core\Di\DependencyInjector');
         $this->dependencyInjector->cache = $mock;
 
         $this->dependencyDtoList = [
@@ -68,13 +69,12 @@ class TestDependencyInjector extends TestHelper
     public function createTest()
     {
         $this->common();
-        $dependencyInjector = Mock::m('System\Core\Di\DependencyInjector');
-        $dependencyInjector->_setMethod('createRecursive')
-            ->_setArgs($this->dependencyDtoList)
-            ->_setReturn(null)
-            ->e();
-
-        $this->compareValue($dependencyInjector, $dependencyInjector->create($this->dependencyDtoList));
+        $dependencyInjector = Phantom::m('System\Core\Di\DependencyInjector')
+            ->setMethod('createRecursive')
+            ->setArgs($this->dependencyDtoList)
+            ->setReturn(null)
+            ->exec();
+        $this->compareValue($dependencyInjector->getOrigin(), $dependencyInjector->create($this->dependencyDtoList));
     }
 
     /**

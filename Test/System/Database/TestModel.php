@@ -8,18 +8,17 @@ namespace Test\System\Database;
 
 use System\Database\TransactionFactory;
 use System\Database\Connection;
+use System\Database\Model;
 use System\Database\Query\DeleteQuery;
 use System\Database\Query\InsertQuery;
 use System\Database\Query\SelectQuery;
 use System\Database\Query\UpdateQuery;
 use System\Core\Di\Container;
-use Test\Mock;
-use Test\Parse;
 use Test\TestHelper;
 
-use Test\TestModel;
+use Test\TestHogeModel;
 
-class TestBaseModel extends TestHelper
+class TestModel extends TestHelper
 {
     /**
      * @var Connection
@@ -47,7 +46,7 @@ class TestBaseModel extends TestHelper
      */
     public function __constructTest()
     {
-        $this->compareInstance('System\Database\BaseModel', new TestModel($this->connection, $this->container));
+        $this->compareInstance('System\Database\Model', new Model($this->connection, $this->container));
     }
 
     /**
@@ -55,9 +54,9 @@ class TestBaseModel extends TestHelper
      */
     public function setPropertyTest()
     {
-        $testModel = new TestModel();
-        $testModel->setProperty('id', 99);
-        $this->compareValue(99, $testModel->getId());
+        $testHogeModel = new TestHogeModel();
+        $testHogeModel->setProperty('id', 99);
+        $this->compareValue(99, $testHogeModel->getId());
     }
 
     /**
@@ -66,10 +65,10 @@ class TestBaseModel extends TestHelper
      */
     public function __callAndSetPropertyTest()
     {
-        $testModel = new TestModel();
-        $testModel->setProperty('id', 99);
-        $testModel->setExtendProperty('id', 'hoge');
-        $this->compareValue(99, $testModel->hoge());
+        $testHogeModel = new TestHogeModel();
+        $testHogeModel->setProperty('id', 99);
+        $testHogeModel->setExtendProperty('id', 'hoge');
+        $this->compareValue(99, $testHogeModel->hoge);
     }
 
     /**
@@ -77,9 +76,9 @@ class TestBaseModel extends TestHelper
      */
     public function toArrayTest()
     {
-        $testModel = new TestModel();
-        $testModel->setProperty('id', 99);
-        $array = $testModel->toArray();
+        $testHogeModel = new TestHogeModel();
+        $testHogeModel->setProperty('id', 99);
+        $array = $testHogeModel->toArray();
         $this->compareValue(['id' => 99], $array);
     }
 
@@ -88,8 +87,8 @@ class TestBaseModel extends TestHelper
      */
     public function __invokeTest()
     {
-        $testModel = new TestModel();
-        $instance  = $testModel(['id' => 99]);
+        $testHogeModel = new TestHogeModel();
+        $instance  = $testHogeModel(['id' => 99]);
         $this->compareValue(99, $instance->getId());
     }
 
@@ -102,8 +101,8 @@ class TestBaseModel extends TestHelper
         $reflection->setAccessible(true);
         $reflection->setValue($this->connection, 'slave1');
 
-        $testModel = new TestModel($this->connection, $this->container);
-        $this->compareValueLax(new SelectQuery($this->connection, $this->container, 'Test\TestModel'), $testModel->selectQuery());
+        $testHogeModel = new TestHogeModel($this->connection, $this->container);
+        $this->compareValueLax(new SelectQuery($this->connection, $this->container, 'Test\TestHogeModel'), $testHogeModel->selectQuery());
     }
 
     /**
@@ -115,8 +114,8 @@ class TestBaseModel extends TestHelper
         $reflection->setAccessible(true);
         $reflection->setValue($this->connection, 'master');
 
-        $testModel = new TestModel($this->connection, $this->container);
-        $this->compareValueLax(new InsertQuery($this->connection, $this->container, 'Test\TestModel'), $testModel->insertQuery());
+        $testHogeModel = new TestHogeModel($this->connection, $this->container);
+        $this->compareValueLax(new InsertQuery($this->connection, $this->container, 'Test\TestHogeModel'), $testHogeModel->insertQuery());
     }
 
     /**
@@ -128,8 +127,8 @@ class TestBaseModel extends TestHelper
         $reflection->setAccessible(true);
         $reflection->setValue($this->connection, 'master');
 
-        $testModel = new TestModel($this->connection, $this->container);
-        $this->compareValueLax(new UpdateQuery($this->connection, $this->container, 'Test\TestModel'), $testModel->updateQuery());
+        $testHogeModel = new TestHogeModel($this->connection, $this->container);
+        $this->compareValueLax(new UpdateQuery($this->connection, $this->container, 'Test\TestHogeModel'), $testHogeModel->updateQuery());
     }
 
     /**
@@ -141,17 +140,17 @@ class TestBaseModel extends TestHelper
         $reflection->setAccessible(true);
         $reflection->setValue($this->connection, 'master');
 
-        $testModel = new TestModel($this->connection, $this->container);
-        $this->compareValueLax(new DeleteQuery($this->connection, $this->container, 'Test\TestModel'), $testModel->deleteQuery());
+        $testHogeModel = new TestHogeModel($this->connection, $this->container);
+        $this->compareValueLax(new DeleteQuery($this->connection, $this->container, 'Test\TestHogeModel'), $testHogeModel->deleteQuery());
     }
 
 }
 
 namespace Test;
 
-use System\Database\BaseModel;
+use System\Database\Model;
 
-class TestModel extends BaseModel
+class TestHogeModel extends Model
 {
     /**
      * @model int

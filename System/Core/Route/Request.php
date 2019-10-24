@@ -8,6 +8,7 @@ namespace System\Core\Route;
 
 use System\Type\Resource\File;
 use System\Type\Resource\Image;
+use System\Util\Kit;
 use System\Util\Str;
 
 class Request
@@ -38,9 +39,9 @@ class Request
     public function __construct()
     {
         $this->server = $_SERVER;
-        $this->post     = $_POST;
-        $this->get        = $_GET;
-        $this->files    = $_FILES;
+        $this->post   = $_POST;
+        $this->get    = $_GET;
+        $this->files  = $_FILES;
     }
 
     /**
@@ -184,7 +185,7 @@ class Request
             }
         }
 
-        return Str::pathToNameSpace(CONTROLLER_DIR . implode('/', $nameSpace) . 'Controller');
+        return Kit::pathToNameSpace(CONTROLLER_DIR . implode('/', $nameSpace) . 'Controller');
     }
 
     /**

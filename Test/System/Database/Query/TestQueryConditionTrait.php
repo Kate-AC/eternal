@@ -10,7 +10,6 @@ use System\Core\Di\Container;
 use System\Database\Query\QueryConditionTrait;
 use System\Database\Connection;
 use System\Exception\DatabaseException;
-use Test\Mock;
 use Test\TestHelper;
 
 class TestQueryConditionTrait extends TestHelper
@@ -35,7 +34,7 @@ class TestQueryConditionTrait extends TestHelper
     public function whereTest()
     {
         try {
-            $this->where('id', null);
+            $this->where(1, null);
             $this->throwError('例外が発生すべき個所で発生していない');
         } catch (DatabaseException $e) {
             $this->compareException('Conditionクラスを', $e, '第2引数がnullの場合');
@@ -55,7 +54,7 @@ class TestQueryConditionTrait extends TestHelper
     public function otherwiseTest()
     {
         try {
-            $this->where('id', null);
+            $this->where(1, null);
             $this->throwError('例外が発生すべき個所で発生していない');
         } catch (DatabaseException $e) {
             $this->compareException('Conditionクラスを', $e, '第2引数がnullの場合');

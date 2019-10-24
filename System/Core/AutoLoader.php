@@ -33,21 +33,21 @@ class AutoLoader
      * 存在しないクラスがコールされた時に呼ばれる
      * 先にspl_autoload_registerでこのメソッドをコールバックとして登録しなければならない
      *
-     * @param string $callNameSpace 名前空間
+     * @param string $namespace
      */
-    public function autoLoad($nameSpace)
+    public function autoLoad($namespace)
     {
         $allFilePathList = $this->filePathSearcher->getAllFilePathList();
         if (empty($allFilePathList)) {
             $allFilePathList = $this->filePathSearcher->search();
         }
 
-        $filePath = Kit::nameSpaceToPath($nameSpace);
+        $filePath = Kit::nameSpaceToPath($namespace);
         if (isset($allFilePathList[$filePath])) {
-            require_once($filePath);
+            include_once($filePath);
             return;
         }
 
-        throw new SystemException(sprintf('存在しないクラス(%s)が呼ばれた', $nameSpace));
+        throw new SystemException(sprintf('存在しないクラス(%s)が呼ばれた', $namespace));
     }
 }

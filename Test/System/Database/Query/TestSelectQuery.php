@@ -10,7 +10,7 @@ use System\Core\Di\Container;
 use System\Database\Connection;
 use System\Database\Query\SelectQuery;
 use System\Exception\DatabaseException;
-use Test\Mock;
+use Phantom\Phantom;
 use Test\TestHelper;
 
 use Test\HogeModel;
@@ -40,31 +40,35 @@ class TestSelectQuery extends TestHelper
         $selectQuery = $reflection->newInstanceWithoutConstructor();
         $proprety = new \ReflectionProperty($selectQuery, 'tableName');
         $proprety->setAccessible(true);
-        $proprety->setValue($selectQuery, 'a_tbl');
+        $proprety->setValue($selectQuery, 'a');
 
         $selectSubQuery = $reflection->newInstanceWithoutConstructor();
         $proprety = new \ReflectionProperty($selectSubQuery, 'tableName');
         $proprety->setAccessible(true);
-        $proprety->setValue($selectSubQuery, 'b_tbl');
+        $proprety->setValue($selectSubQuery, 'b');
 
         $selectSubQuery->select(['id']);
 
         $selectQuery->select([
-            'hoge' => 'a_tbl.id',
-            'COUNT(a_tbl.name)',
+            'hoge' => 'a.id',
+            'COUNT(a.name)',
             $selectSubQuery
         ], 'a');
 
         $method = new \ReflectionMethod($selectQuery, 'getSelectLine');
         $method->setAccessible(true);
-        $expected = 'a_tbl.id AS "a_tbl___a_tbl.id", COUNT(a_tbl.name) AS "_collect___COUNT(a_tbl.name)", ( SELECT b_tbl.id FROM b_tbl AS b_tbl ) AS "_collect___( SELECT b_tbl.id FROM b_tbl AS b_tbl )"';
+        $expected = 'a.id AS hoge, (COUNT(a.name)) AS `_collect___(COUNT(a.name))`, ( SELECT b.id FROM b AS b ) AS ` SELECT b.id FROM b AS b `';
         $this->compareValue($expected, $method->invoke($selectQuery), 'select句を使用した場合');
 
         $expected = [
             'hoge' => [
-                'table'  => 'a_tbl',
+                'table'  => 'a',
                 'column' => 'id'
-            ]
+            ],
+            '` SELECT b.id FROM b AS b `' => [
+                'table'  => '_collect',
+                'column' => '( SELECT b.id FROM b AS b )'
+            ],
         ];
 
         $property = new \ReflectionProperty($selectQuery, 'propertyAsName');
@@ -77,28 +81,27 @@ class TestSelectQuery extends TestHelper
      */
     public function getSelectLineTest()
     {
-        $selectQuery = Mock::m('System\Database\Query\SelectQuery');
-        $selectQuery->tableName = 'tbl_test_main_model';
+        $selectQuery = Phantom::m('System\Database\Query\SelectQuery');
+        $selectQuery->tableName = 'test_main_model';
         $selectQuery->tableAsName = [
-            'tbl_test_main_model' => 'tbl_test_main_model',
-            'tbl_test_join_model' => 'tbl_test_join_model'
+            'test_main_model' => 'test_main_model',
+            'test_join_model' => 'test_join_model'
         ];
-        $selectQuery->join = [['join' => ['table' => 'tbl_test_join_model']]];
+        $selectQuery->join = [['join' => ['table' => 'test_join_model']]];
 
-        $selectQuery->container = Mock::m('System\Core\Di\Container')
-            ->_setMethod('getByTable')
-            ->_setArgs('tbl_test_main_model')
-            ->_setReturn('Test\TestMainModel')
-            ->e();
+        $selectQuery->container = Phantom::m('System\Core\Di\Container')
+            ->setMethod('getByTable')
+            ->setArgs('test_main_model')
+            ->setReturn('Test\TestMainModel')
+            ->exec();
 
         $selectQuery->container
-            ->_setMethod('getByTable')
-            ->_setArgs('tbl_test_join_model')
-            ->_setReturn('Test\TestJoinModel')
-            ->e();
-
+            ->setMethod('getByTable')
+            ->setArgs('test_join_model')
+            ->setReturn('Test\TestJoinModel')
+            ->exec();
         $this->compareValue(
-            'tbl_test_main_model.hoge AS tbl_test_main_model___hoge, ASTEXT(tbl_test_join_model.mosu) AS tbl_test_join_model___mosu',
+            'test_main_model.hoge AS `test_main_model___test_main_model.hoge`, test_join_model.mosu AS `test_join_model___test_join_model.mosu`',
             $selectQuery->getSelectLine(),
             'SELECT句が空の場合'
         );
@@ -221,16 +224,16 @@ class TestSelectQuery extends TestHelper
      */
     public function getFromLineTest()
     {
-        $selectQuery = Mock::m('System\Database\Query\SelectQuery');
+        $selectQuery = Phantom::m('System\Database\Query\SelectQuery');
         $selectQuery->tableName = 'hoge';
         $this->compareValue('hoge AS hoge', $selectQuery->getFromLine(), 'fromが空の場合');
 
-        $from = Mock::m('System\Database\Query\SelectQuery');
+        $from = Phantom::m('System\Database\Query\SelectQuery');
         $from->placeholder = [2, 3];
-        $from->_setMethod('getBeforeQuery')
-            ->_setArgs()
-            ->_setReturn('SELECT hoge FROM fuga')
-            ->e();
+        $from->setMethod('getBeforeQuery')
+            ->setArgs()
+            ->setReturn('SELECT hoge FROM fuga')
+            ->exec();
 
         $selectQuery = (new HogeModel($this->connection, $this->container))->selectQuery();
         $property = new \ReflectionProperty($selectQuery, 'from');
@@ -271,22 +274,67 @@ class TestSelectQuery extends TestHelper
      */
     public function createTest()
     {
-        $selectQuery = Mock::m('System\Database\Query\SelectQuery');
+        $selectQuery = Phantom::m('System\Database\Query\SelectQuery');
         $selectQuery->tableAsName = ['hoge' => 'A'];
 
-        $selectQuery->_setMethod('getExplainLine')->_setArgs()->_setReturn('COUNT(hoge.fuga)')->e();
-        $selectQuery->_setMethod('getSelectLine')->_setArgs()->_setReturn('B')->e();
+        $selectQuery
+            ->setMethod('getExplainLine')
+            ->setArgs()
+            ->setReturn('COUNT(hoge.fuga)')
+            ->exec();
+        $selectQuery
+            ->setMethod('getSelectLine')
+            ->setArgs()
+            ->setReturn('B')
+            ->exec();
         $selectQuery->tableName = 'C';
-        $selectQuery->_setMethod('getIndexHintLine')->_setArgs('C')->_setReturn('D')->e();
-        $selectQuery->_setMethod('getJoinLine')->_setArgs()->_setReturn('E')->e();
-        $selectQuery->_setMethod('getConditionLine')->_setArgs()->_setReturn('F')->e();
-        $selectQuery->_setMethod('getGroupByLine')->_setArgs()->_setReturn('G')->e();
-        $selectQuery->_setMethod('getOrderByLine')->_setArgs()->_setReturn('H')->e();
-        $selectQuery->_setMethod('getLimitLine')->_setArgs()->_setReturn('I')->e();
-        $selectQuery->_setMethod('getForUpdateLine')->_setArgs()->_setReturn('J')->e();
-        $selectQuery->_setMethod('getOffsetLine')->_setArgs()->_setReturn('K')->e();
+        $selectQuery
+            ->setMethod('getIndexHintLine')
+            ->setArgs('C')
+            ->setReturn('D')
+            ->exec();
+        $selectQuery
+            ->setMethod('getJoinLine')
+            ->setArgs()
+            ->setReturn('E')
+            ->exec();
+        $selectQuery
+            ->setMethod('getWhereLine')
+            ->setArgs()
+            ->setReturn('F')
+            ->exec();
+        $selectQuery
+            ->setMethod('getGroupByLine')
+            ->setArgs()
+            ->setReturn('G')
+            ->exec();
+        $selectQuery
+            ->setMethod('getHavingLine')
+            ->setArgs()
+            ->setReturn('H')
+            ->exec();
+        $selectQuery
+            ->setMethod('getOrderByLine')
+            ->setArgs()
+            ->setReturn('I')
+            ->exec();
+        $selectQuery
+            ->setMethod('getLimitLine')
+            ->setArgs()
+            ->setReturn('J')
+            ->exec();
+        $selectQuery
+            ->setMethod('getForUpdateLine')
+            ->setArgs()
+            ->setReturn('K')
+            ->exec();
+        $selectQuery
+            ->setMethod('getOffsetLine')
+            ->setArgs()
+            ->setReturn('L')
+            ->exec();
 
-        $this->compareValue('COUNT(hoge.fuga) SELECT B FROM C AS C D E F G H I J K', $selectQuery->create());
+        $this->compareValue('COUNT(hoge.fuga) SELECT B FROM C AS C D E F G H I J K L', $selectQuery->create());
     }
 }
 
@@ -301,7 +349,7 @@ class TestMainModel
 
     public static function getTableName()
     {
-        return 'tbl_test_main_model';
+        return 'test_main_model';
     }
 }
 
@@ -316,15 +364,15 @@ class TestJoinModel
 
     public static function getTableName()
     {
-        return 'tbl_test_join_model';
+        return 'test_join_model';
     }
 }
 
 namespace Test;
 
-use System\Database\BaseModel;
+use System\Database\Model;
 
-class HogeModel extends BaseModel
+class HogeModel extends Model
 {
     /**
      * @model int
@@ -338,7 +386,7 @@ class HogeModel extends BaseModel
 
     public static function getTableName()
     {
-        return 'hoge_tbl';
+        return 'hoge';
     }
 
     public static function getPrimaryKeys()

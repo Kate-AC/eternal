@@ -6,7 +6,7 @@
 
 namespace Test\System\Core\Di;
 
-use Test\Mock;
+use Phantom\Phantom;
 use Test\TestHelper;
 use System\Exception\SystemException;
 use System\Core\Di\DependencyDto;
@@ -55,29 +55,29 @@ class TestDependencySearcher extends TestHelper
     {
         $filePathList = [MODEL_DIR . 'Hoge.php'];
         $namespace    = 'App\Model\Hoge';
-        $table        = 'hoge_tbl';
+        $table        = 'hoge';
 
-        $mockC = Mock::m('System\Util\FilePathSearcher')
-            ->_setMethod('search')
-            ->_setArgs()
-            ->_setReturn($filePathList)
-            ->e();
-        $mockB = Mock::m('System\Util\FilePathSearcher')
-            ->_setMethod('setUnUseDir')
-            ->_setArgs(getUnUseDirs())
-            ->_setReturn($mockC)
-            ->e();
-        $mockA = Mock::m('System\Util\FilePathSearcher')
-            ->_setMethod('setUseDir')
-            ->_setArgs([MODEL_DIR])
-            ->_setReturn($mockB)
-            ->e();
+        $mockC = Phantom::m('System\Util\FilePathSearcher')
+            ->setMethod('search')
+            ->setArgs()
+            ->setReturn($filePathList)
+            ->exec();
+        $mockB = Phantom::m('System\Util\FilePathSearcher')
+            ->setMethod('setUnUseDir')
+            ->setArgs(getUnUseDirs())
+            ->setReturn($mockC)
+            ->exec();
+        $mockA = Phantom::m('System\Util\FilePathSearcher')
+            ->setMethod('setUseDir')
+            ->setArgs([MODEL_DIR])
+            ->setReturn($mockB)
+            ->exec();
 
-        $dependencySearcher = Mock::m('System\Core\Di\DependencySearcher')
-            ->_setMethod('search')
-            ->_setArgs($namespace)
-            ->_setReturn(null)
-            ->e();
+        $dependencySearcher = Phantom::m('System\Core\Di\DependencySearcher')
+            ->setMethod('search')
+            ->setArgs($namespace)
+            ->setReturn(null)
+            ->exec();
 
         $dependencySearcher->filePathSearcher = $mockA;
         $result = $dependencySearcher->searchByTable($table);

@@ -190,10 +190,10 @@ class ModelCreator
                 $resultList = [];
                 foreach ($columnList as $column) {
                     $resultList[] = [
-                        'Field'     => $column['column_name'],
-                        'Type'        => $column['udt_name'],
+                        'Field'   => $column['column_name'],
+                        'Type'    => $column['udt_name'],
                         'Default' => 'now()' !== $column['column_default'] ? $column['column_default'] : 'CURRENT_TIMESTAMP',
-                        'Key'         => in_array($column['column_name'], $primaryKeyList, true) ? 'PRI' : null
+                        'Key'     => in_array($column['column_name'], $primaryKeyList, true) ? 'PRI' : null
                     ];
                 }
                 break;

@@ -25,18 +25,18 @@ trait QueryFactoryTrait
     private function makeDependencyList()
     {
         foreach ($this->tableAsName as $as => $table) {
-            $this->dependencyList[$as] = [];
+            if (!isset($this->dependencyList[$as])) {
+                $this->dependencyList[$as] = [];
+            }
             foreach ($this->formatedJoin as $join) {
+                $left  = $join['on'][0]['a']['table'];
+                $right = $join['on'][0]['b']['table'];
                 //テーブル名が一致して尚且つ依存リストに無いもの
-                if ($as === $join['on'][0]['a']['table']
-                    && !isset($this->dependencyList[$join['on'][0]['b']['table']])
-                ) {
-                    $this->dependencyList[$as][] = $join['on'][0]['b']['table'];
+                if ($as === $left && !isset($this->dependencyList[$right])) {
+                    $this->dependencyList[$as][] = $right;
                 }
-                if ($as === $join['on'][0]['b']['table']
-                    && !isset($this->dependencyList[$join['on'][0]['a']['table']])
-                ) {
-                    $this->dependencyList[$as][] = $join['on'][0]['a']['table'];
+                if ($as === $right && !isset($this->dependencyList[$left])) {
+                    $this->dependencyList[$as][] = $left;
                 }
             }
         }
@@ -192,9 +192,10 @@ trait QueryFactoryTrait
 
                     $myKey = key($classList[$table]);
                     $key   = key($classList[$d]);
-                    $classList[$table][$myKey][$key] = $classList[$d][$key];
 
+                    $classList[$table][$myKey][$key] = $classList[$d][$key];
                     $createdList[$table] = $classList[$table];
+
                     unset($dependencyList[$table]);
                 }
             }
@@ -224,7 +225,7 @@ trait QueryFactoryTrait
 
         $findList = [];
         foreach ($resultList as $result) {
-            $array      = [];
+            $array = [];
             //テーブルとカラムの配列を作る
             foreach ($result as $key => $value) {
                 $list = explode('___', $key);
@@ -250,7 +251,6 @@ trait QueryFactoryTrait
                 }
             }
 
-            //実クラスからエンティティを生成する
             foreach ($array as $table => $propertyList) {
                 $className = ucfirst(Str::snakeToCamel($table));
                 //AS句と同じ文字列で変数を取得できるようにする

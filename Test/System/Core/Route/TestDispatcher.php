@@ -11,7 +11,7 @@ use System\Core\Extend\ExtendProtocol;
 use System\Core\Route\Request;
 use System\Core\Route\Dispatcher;
 use System\Log\SystemErrorLogger;
-use Test\Mock;
+use Phantom\Phantom;
 use Test\TestHelper;
 
 class TestDispatcher extends TestHelper
@@ -32,65 +32,71 @@ class TestDispatcher extends TestHelper
      */
     public function startTest()
     {
-        $firstProcess = Mock::m()
-            ->_setMethod('execute')
-            ->_setArgs()
-            ->_setReturn(null)
-            ->e();
+        $firstProcess = Phantom::m()
+            ->setMethod('execute')
+            ->setArgs()
+            ->setReturn(null)
+            ->exec();
 
         $namespace = 'Test\Hoge\Fuga';
 
-        $request = Mock::m('System\Core\Route\Request')
-            ->_setMethod('getControllerNameSpace')
-            ->_setArgs()
-            ->_setReturn($namespace)
-            ->e();
+        $request = Phantom::m('System\Core\Route\Request')
+            ->setMethod('getControllerNameSpace')
+            ->setArgs()
+            ->setReturn($namespace)
+            ->exec();
 
-        $container = Mock::m('System\Core\Di\Container')
-            ->_setMethod('get')
-            ->_setArgs(FIRST_PROCESS_CLASS)
-            ->_setReturn($firstProcess)
-            ->e();
+        $container = Phantom::m('System\Core\Di\Container')
+            ->setMethod('get')
+            ->setArgs(FIRST_PROCESS_CLASS)
+            ->setReturn($firstProcess)
+            ->exec();
 
         $extendProtocol = new ExtendProtocol();
 
-        $controller = Mock::m()
-            ->_setMethod('_initialize')
-            ->_setArgs($container, $extendProtocol, $request)
-            ->_setReturn(null)
-            ->e();
+        $controller = Phantom::m()
+            ->setMethod('_initialize')
+            ->setArgs($container, $extendProtocol, $request)
+            ->setReturn(null)
+            ->exec();
 
-        $controller->_setMethod('before')
-            ->_setArgs()
-            ->_setReturn(null)
-            ->e();
+        $controller
+            ->setMethod('before')
+            ->setArgs()
+            ->setReturn(null)
+            ->exec();
 
-        $controller->_setMethod('_doMethod')
-            ->_setArgs()
-            ->_setReturn(null)
-            ->e();
+        $controller
+            ->setMethod('_doMethod')
+            ->setArgs()
+            ->setReturn(null)
+            ->exec();
 
-        $controller->_setMethod('after')
-            ->_setArgs()
-            ->_setReturn(null)
-            ->e();
+        $controller
+            ->setMethod('after')
+            ->setArgs()
+            ->setReturn(null)
+            ->exec();
 
-        $controller->_setMethod('_checkNeedTemplate')
-            ->_setArgs()
-            ->_setReturn(null)
-            ->e();
+        $controller
+            ->setMethod('_checkNeedTemplate')
+            ->setArgs()
+            ->setReturn(null)
+            ->exec();
 
-        $controller->_setMethod('_responseJsonWhenUseJsonResponse')
-            ->_setArgs()
-            ->_setReturn(null)
-            ->e();
+        $controller
+            ->setMethod('_responseJsonWhenUseJsonResponse')
+            ->setArgs()
+            ->setReturn(null)
+            ->exec();
 
-        $container->_setMethod('get')
-            ->_setArgs($namespace)
-            ->_setReturn($controller)
-            ->e();
+        $container
+            ->setMethod('get')
+            ->setArgs($namespace)
+            ->setReturn($controller)
+            ->exec();
 
-        $dispatcher = Mock::m('System\Core\Route\Dispatcher');
+        $dispatcher = Phantom::m('System\Core\Route\Dispatcher');
         $dispatcher->container      = $container;
         $dispatcher->extendProtocol = $extendProtocol;
         $dispatcher->request        = $request;

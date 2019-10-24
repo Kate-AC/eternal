@@ -8,6 +8,7 @@ namespace System\Core\Di;
 
 use System\Exception\SystemException;
 use System\Util\FilePathSearcher;
+use System\Util\Kit;
 use System\Util\Str;
 
 class DependencySearcher
@@ -96,7 +97,7 @@ class DependencySearcher
         foreach ($filePathList as $filePath) {
             $list = explode('/', $filePath);
             if (str_replace('.php', '', end($list)) === ucfirst(Str::snakeToCamel($table))) {
-                $namespace = Str::pathToNameSpace($filePath);
+                $namespace = Kit::pathToNameSpace($filePath);
                 $this->search($namespace);
                 return $namespace;
             }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * BaseControllerのテスト
+ * Controllerのテスト
  */
 
 namespace Test\System\Core\Route;
@@ -11,12 +11,12 @@ use System\Core\Extend\ExtendProtocol;
 use System\Core\Extend\Module\RenderModule;
 use System\Core\Route\Request;
 use System\Exception\ControllerException;
-use Test\Mock;
+use Phantom\Phantom;
 use Test\TestHelper;
 
-use Test\TestController;
+use Test\TestHogeController;
 
-class TestBaseController extends TestHelper
+class TestController extends TestHelper
 {
     /**
      * @var testController
@@ -44,17 +44,18 @@ class TestBaseController extends TestHelper
     private function common()
     {
         $method = 'testAction';
-        $mock = Mock::m('System\Core\Route\Request')
-            ->_setMethod('getControllerMethod')
-            ->_setArgs()
-            ->_setReturn($method)
-            ->e();
-        $mock->_setMethod('server')
-            ->_setArgs('SERVER_NAME')
-            ->_setReturn('localhost')
-            ->e();
+        $mock = Phantom::m('System\Core\Route\Request')
+            ->setMethod('getControllerMethod')
+            ->setArgs()
+            ->setReturn($method)
+            ->exec();
+        $mock
+            ->setMethod('server')
+            ->setArgs('SERVER_NAME')
+            ->setReturn('localhost')
+            ->exec();
 
-        $this->testController = Mock::m('Test\TestController');
+        $this->testController = Phantom::m('Test\TestHogeController');
         $this->testController->request = $mock;
     }
 
@@ -63,7 +64,7 @@ class TestBaseController extends TestHelper
      */
     public function _initializeTest()
     {
-        $testController = new TestController();
+        $testController = new TestHogeController();
         $extendProtocol = new ExtendProtocol();
         $request        = new Request();
         $testController->_initialize($this->container, $extendProtocol, $request);
@@ -86,17 +87,18 @@ class TestBaseController extends TestHelper
     {
         $method = 'testAction';
 
-        $testController = Mock::m('Test\TestController');
-        $testController->_setMethod('_checkMethodExist')
-            ->_setArgs($testController, $method)
-            ->_setReturn(null)
-            ->e();
+        $testController = Phantom::m('Test\TestHogeController');
+        $testController
+            ->setMethod('_checkMethodExist')
+            ->setArgs($testController, $method)
+            ->setReturn(null)
+            ->exec();
 
-        $testController->request = Mock::m('System\Core\Route\Request')
-            ->_setMethod('getControllerMethod')
-            ->_setArgs()
-            ->_setReturn($method)
-            ->e();
+        $testController->request = Phantom::m('System\Core\Route\Request')
+            ->setMethod('getControllerMethod')
+            ->setArgs()
+            ->setReturn($method)
+            ->exec();
 
         $this->compareValue(null, $testController->_doMethod());
         $this->compareValue('success', $testController->result, 'メソッド実行');
@@ -108,7 +110,7 @@ class TestBaseController extends TestHelper
      */
     public function _checkMethodExistTest()
     {
-        $class  = 'Test\TestController';
+        $class  = 'Test\TestHogeController';
         $method = new \ReflectionMethod($class, '_checkMethodExist');
         $method->setAccessible(true);
         $this->compareValue(null, $method->invoke(new $class(), $class, 'testAction'));
@@ -126,13 +128,13 @@ class TestBaseController extends TestHelper
      */
     public function renderTest()
     {
-        $this->common();
-        $fileExistController = Mock::m('Test\FileExistController');
+        $fileExistController = Phantom::m('Test\FileExistController');
 
         $templateName = 'hoge';
         $fileExistController->render($templateName);
+
         $this->compareValue(
-            sprintf('%s%s.%s', TEMPLATE_DIR, $templateName, TEMPLATE_EXTENSION),
+            sprintf('%s%s.%s', VIEW_DIR, $templateName, VIEW_EXTENSION),
             $fileExistController->_useTemplate
         );
 
@@ -153,10 +155,10 @@ class TestBaseController extends TestHelper
     public function _existTemplateTest()
     {
         $this->common();
-        $this->compareValue(null, $this->testController->_existTemplate(str_replace('extend://', '', __FILE__)), '存在するファイルを指定した場合');
+        $this->compareValue(null, $this->testController->_existView(str_replace('extend://', '', __FILE__)), '存在するファイルを指定した場合');
 
         try {
-            $this->testController->_existTemplate('hoge');
+            $this->testController->_existView('hoge');
         } catch (ControllerException $e) {
             $this->compareException('存在しないテンプレートを指定した', $e, '存在しないファイルを指定した場合');
             return;
@@ -174,13 +176,13 @@ class TestBaseController extends TestHelper
         $this->testController->_variableList    = ['aaa', 1];
 
         $this->testController->extendProtocol = new ExtendProtocol();
-        $this->compareValue(null, $this->testController->_includeTemplate(__FILE__), '存在するファイルを指定した場合');
+        $this->compareValue(null, $this->testController->_includeView(__FILE__), '存在するファイルを指定した場合');
 
         set_error_handler(function($severity, $message, $file, $line) {
             throw new \Exception('存在しないテンプレートをインクルードしようとした');
         });
         try {
-            $this->testController->_includeTemplate('hoge');
+            $this->testController->_includeView('hoge');
         } catch (\Exception $e) {
             $this->compareException('存在しないテンプレートをインクルードしようとした', $e, '存在しないファイルを指定した場合');
             restore_error_handler();
@@ -258,16 +260,16 @@ class TestBaseController extends TestHelper
 
 namespace Test;
 
-use System\Core\Route\BaseController;
+use System\Core\Route\Controller;
 
-class FileExistController extends BaseController
+class FileExistController extends Controller
 {
-    protected function _existTemplate($template)
+    protected function _existView($template)
     {
         return true;
     }
 
-    protected function _includeTemplate($template)
+    protected function _includeView($template)
     {
         return true;
     }
@@ -275,9 +277,9 @@ class FileExistController extends BaseController
 
 namespace Test;
 
-use System\Core\Route\BaseController;
+use System\Core\Route\Controller;
 
-class TestController extends BaseController
+class TestHogeController extends Controller
 {
     private $result;
 

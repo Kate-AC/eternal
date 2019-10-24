@@ -21,7 +21,7 @@ define('JS_DIR',         CURRENT_DIR . 'public/js/');
 
 /* ビューの拡張子の設定 ================================================================= */
 
-const VIEW_EXTENSION = 'php';
+const VIEW_EXTENSION = 'arc';
 
 
 /* コントローラより先に実行されるクラスの使用設定 ======================================= */
@@ -98,7 +98,7 @@ function getConnectionList()
 // 0: キャッシュを使用しない
 // 1: Memcache
 // 2: Memcached
-const SELECT_CACHE_TYPE = 2;
+const SELECT_CACHE_TYPE = 0;
 
 // 上記で1か2を選択した場合
 const MEMCACHE_HOST = '127.0.0.1';

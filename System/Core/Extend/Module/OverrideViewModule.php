@@ -31,7 +31,7 @@ class OverrideViewModule extends AbstractModule
         if (!isset($match[1])) {
             return $data;
         }
-        $parent = $match[1] . '.php';
+        $parent = sprintf('%s.%s', $match[1], VIEW_EXTENSION);
 
         preg_match_all(':{%([^/() ]+)%}:', $data, $match);
         $overrideList = $match[0];

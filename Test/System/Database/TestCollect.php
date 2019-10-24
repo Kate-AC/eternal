@@ -7,8 +7,6 @@
 namespace Test\System\Database;
 
 use System\Database\Collect;
-use Test\Mock;
-use Test\Parse;
 use Test\TestHelper;
 
 class TestCollect extends TestHelper
@@ -34,7 +32,7 @@ class TestCollect extends TestHelper
     {
         $list    = ['hoge' => 99, 'fuga' => 100];
         $collect = new Collect($list);
-        $this->compareValue(99, $collect->hoge(), 'プロパティが存在する場合');
-        $this->compareValue(null, $collect->aaa(), 'プロパティが存在しない場合');
+        $this->compareValue(99, $collect->hoge, 'プロパティが存在する場合');
+        $this->compareValue(null, $collect->aaa, 'プロパティが存在しない場合');
     }
 }

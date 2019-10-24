@@ -7,7 +7,7 @@
 namespace Test\System\Core\Extend\Module;
 
 use System\Core\Extend\Module\RenderModule;
-use Test\Mock;
+use Phantom\Phantom;
 use Test\TestHelper;
 
 class TestRenderModule extends TestHelper
@@ -20,7 +20,7 @@ class TestRenderModule extends TestHelper
     {
         $renderModule = RenderModule::get();
         $renderModule->setClassForView('StaticClass', 'Test\StaticClass');
-        $path = TEMPLATE_DIR . 'HogeFuga.php';
+        $path = VIEW_DIR . 'HogeFuga.php';
 
         $data = <<<EOD
 {{\$hoge}}

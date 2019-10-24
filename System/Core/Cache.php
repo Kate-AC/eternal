@@ -19,12 +19,12 @@ class Cache
     /**
      * @var mixed
      */
-    private static $cache;
+    private $cache;
 
     /**
      * @var mixed[]
      */
-    private static $staticCache = [];
+    private $staticCache = [];
 
     /**
      * @var int
@@ -47,8 +47,8 @@ class Cache
                 if (!class_exists('Memcache', false)) {
                     throw new SystemException('Memcacheは存在しません');
                 }
-                self::$cache = $this->getInstance($this->cacheType);
-                if (!self::$cache->connect(MEMCACHE_HOST, MEMCACHE_PORT)) {
+                $this->cache = $this->getInstance($this->cacheType);
+                if (!$this->cache->connect(MEMCACHE_HOST, MEMCACHE_PORT)) {
                     throw new SystemException('Memcacheに接続できません。ホスト名とポートを確認してください。');
                 }
                 break;
@@ -56,8 +56,8 @@ class Cache
                 if (!class_exists('Memcached', false)) {
                     throw new SystemException('Memcachedは存在しません');
                 }
-                self::$cache = $this->getInstance($this->cacheType);
-                if (!self::$cache->addServer(MEMCACHE_HOST, MEMCACHE_PORT)) {
+                $this->cache = $this->getInstance($this->cacheType);
+                if (!$this->cache->addServer(MEMCACHE_HOST, MEMCACHE_PORT)) {
                     throw new SystemException('Memcachedに接続できません。ホスト名とポートを確認してください。');
                 }
                 break;
@@ -93,15 +93,15 @@ class Cache
     {
         switch ($this->cacheType) {
             case self::NO_CACHE:
-                if (isset(self::$staticCache[$key])) {
-                    $result = self::$staticCache[$key];
+                if (isset($this->staticCache[$key])) {
+                    $result = $this->staticCache[$key];
                 } else {
                     $result = false;
                 }
                 break;
             case self::MEMCACHE:
             case self::MEMCACHED:
-                $result = self::$cache->get($key);
+                $result = $this->cache->get($key);
                 break;
         }
 
@@ -115,17 +115,17 @@ class Cache
      * @param mixed  $value
      * @param int    $time
      */
-    function setCache($key, $value, $time = 604800)
+    public function setCache($key, $value, $time = 604800)
     {
         switch ($this->cacheType) {
             case self::NO_CACHE:
-                self::$staticCache[$key] = $value;
+                $this->staticCache[$key] = $value;
                 break;
             case self::MEMCACHE:
-                self::$cache->set($key, $value, MEMCACHE_COMPRESSED, $time);
+                $this->cache->set($key, $value, MEMCACHE_COMPRESSED, $time);
                 break;
             case self::MEMCACHED:
-                self::$cache->set($key, $value, $time);
+                $this->cache->set($key, $value, $time);
                 break;
         }
     }

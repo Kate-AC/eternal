@@ -6,9 +6,6 @@
 
 namespace Test\System\Exception;
 
-use Test\Dummy;
-use Test\Mock;
-use Test\Parse;
 use Test\TestHelper;
 use System\Exception\DiException;
 

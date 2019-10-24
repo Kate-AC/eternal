@@ -6,9 +6,9 @@
 
 namespace Test\System\Database\Query;
 
+use Phantom\Phantom;
 use System\Database\Query\DeleteQuery;
 use System\Exception\DatabaseException;
-use Test\Mock;
 use Test\TestHelper;
 
 class TestDeleteQuery extends TestHelper
@@ -18,20 +18,19 @@ class TestDeleteQuery extends TestHelper
      */
     public function createTest()
     {
-        $deleteQuery = Mock::m('System\Database\Query\DeleteQuery');
-        $deleteQuery
-            ->_setMethod('getExplainLine')
-            ->_setArgs()
-            ->_setReturn('A')
-            ->e();
+        $deleteQuery = Phantom::m('System\Database\Query\DeleteQuery')
+            ->setMethod('getExplainLine')
+            ->setArgs()
+            ->setReturn('A')
+            ->exec();
 
         $deleteQuery->tableName = 'B';
 
         $deleteQuery
-            ->_setMethod('getConditionLine')
-            ->_setArgs()
-            ->_setReturn('C')
-            ->e();
+            ->setMethod('getWhereLine')
+            ->setArgs()
+            ->setReturn('C')
+            ->exec();
 
         $this->compareValue('A DELETE FROM B C', $deleteQuery->create());
     }
@@ -41,46 +40,46 @@ class TestDeleteQuery extends TestHelper
      */
     public function deleteTest()
     {
-        $deleteQuery = Mock::m('System\Database\Query\DeleteQuery');
+        $deleteQuery = Phantom::m('System\Database\Query\DeleteQuery');
         $query       = 'query';
         $placeholder = 'placeholder';
 
         $deleteQuery
-            ->_setMethod('create')
-            ->_setArgs()
-            ->_setReturn($query)
-            ->e();
+            ->setMethod('create')
+            ->setArgs()
+            ->setReturn($query)
+            ->exec();
 
         $deleteQuery->placeholder = $placeholder;
 
-        $prepare = Mock::m()
-            ->_setMethod('execute')
-            ->_setArgs($placeholder)
-            ->_setReturn(null)
-            ->e();
+        $prepare = Phantom::m()
+            ->setMethod('execute')
+            ->setArgs($placeholder)
+            ->setReturn(null)
+            ->exec();
 
         $prepare
-            ->_setMethod('rowCount')
-            ->_setArgs()
-            ->_setReturn(100)
-            ->e();
+            ->setMethod('rowCount')
+            ->setArgs()
+            ->setReturn(100)
+            ->exec();
 
-        $pdo = Mock::m()
-            ->_setMethod('inTransaction')
-            ->_setArgs()
-            ->_setReturn(true)
-            ->e();
+        $pdo = Phantom::m()
+            ->setMethod('inTransaction')
+            ->setArgs()
+            ->setReturn(true)
+            ->exec();
 
-        $pdo->_setMethod('prepare')
-            ->_setArgs($query)
-            ->_setReturn($prepare)
-            ->e();
+        $pdo->setMethod('prepare')
+            ->setArgs($query)
+            ->setReturn($prepare)
+            ->exec();
 
-        $connection = Mock::m('System\Database\Connection')
-            ->_setMethod('get')
-            ->_setArgs('master')
-            ->_setReturn($pdo)
-            ->e();
+        $connection = Phantom::m('System\Database\Connection')
+            ->setMethod('get')
+            ->setArgs('master')
+            ->setReturn($pdo)
+            ->exec();
 
         $deleteQuery->connection = $connection;
 
@@ -92,19 +91,19 @@ class TestDeleteQuery extends TestHelper
      */
     public function deleteTestWhenExcepion()
     {
-        $deleteQuery = Mock::m('System\Database\Query\DeleteQuery');
+        $deleteQuery = Phantom::m('System\Database\Query\DeleteQuery');
 
-        $pdo = Mock::m()
-            ->_setMethod('inTransaction')
-            ->_setArgs()
-            ->_setReturn(false)
-            ->e();
+        $pdo = Phantom::m()
+            ->setMethod('inTransaction')
+            ->setArgs()
+            ->setReturn(false)
+            ->exec();
 
-        $connection = Mock::m('System\Database\Connection')
-            ->_setMethod('get')
-            ->_setArgs('master')
-            ->_setReturn($pdo)
-            ->e();
+        $connection = Phantom::m('System\Database\Connection')
+            ->setMethod('get')
+            ->setArgs('master')
+            ->setReturn($pdo)
+            ->exec();
 
         $deleteQuery->connection = $connection;
 

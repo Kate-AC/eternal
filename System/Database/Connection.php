@@ -91,7 +91,7 @@ class Connection
      */
     public function get($key)
     {
-        if (empty(self::$pdo)) {
+        if (!isset(self::$pdo[$key])) {
             $this->start();
         }
 

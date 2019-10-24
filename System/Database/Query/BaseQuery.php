@@ -88,22 +88,6 @@ class BaseQuery
     }
 
     /**
-     * 存在しないメソッドを参照した際に呼ばれる
-     *
-     * @param string  $name
-     * @param mixed[] $argList
-     */
-    public function __call($name, $argList)
-    {
-        throw new DatabaseException(
-            sprintf('存在しないメソッド(%s)が呼ばれた(Class: %s)',
-                $name,
-                get_called_class()
-            )
-        );
-    }
-
-    /**
      * DIコンテナを取得する
      *
      * @return Container

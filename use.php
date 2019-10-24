@@ -4,7 +4,9 @@
  * 初動に必要なファイルを宣言する 
  */
 
-require(CURRENT_DIR . 'vendor/autoload.php');
+if (file_exists(CURRENT_DIR . 'vendor/autoload.php')) {
+    require(CURRENT_DIR . 'vendor/autoload.php');
+}
 require(SYSTEM_DIR  . 'Core/AutoLoader.php');
 require(SYSTEM_DIR  . 'Core/Extend/ExtendProtocol.php');
 require(SYSTEM_DIR  . 'Core/Extend/Module/AbstractModule.php');

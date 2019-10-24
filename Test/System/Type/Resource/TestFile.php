@@ -8,7 +8,6 @@ namespace Test\System\Type\Resource;
 
 use System\Type\Resource\File;
 use System\Exception\SystemException;
-use Test\Mock;
 use Test\TestHelper;
 
 class TestFile extends TestHelper

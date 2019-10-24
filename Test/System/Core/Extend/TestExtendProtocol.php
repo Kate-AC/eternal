@@ -6,7 +6,7 @@
 
 namespace Test\System\Core\Extend;
 
-use Test\Mock;
+use Phantom\Phantom;
 use Test\TestHelper;
 use System\Core\AutoLoader;
 use System\Core\Extend\ExtendProtocol;
@@ -41,7 +41,7 @@ class TestExtendProtocol extends TestHelper
      */
     public function stream_statTest()
     {
-        $extendProtocol = Mock::m('System\Core\Extend\ExtendProtocol');
+        $extendProtocol = Phantom::m('System\Core\Extend\ExtendProtocol');
         $extendProtocol->status = 'status';
         $this->compareValue('status', $extendProtocol->stream_stat());
     }
@@ -51,7 +51,7 @@ class TestExtendProtocol extends TestHelper
      */
     public function stream_readTest()
     {
-        $extendProtocol = Mock::m('System\Core\Extend\ExtendProtocol');
+        $extendProtocol = Phantom::m('System\Core\Extend\ExtendProtocol');
         $extendProtocol->data     = '1234567890';
         $extendProtocol->position = 0;
 
@@ -64,7 +64,7 @@ class TestExtendProtocol extends TestHelper
      */
     public function stream_eofTest()
     {
-        $extendProtocol = Mock::m('System\Core\Extend\ExtendProtocol');
+        $extendProtocol = Phantom::m('System\Core\Extend\ExtendProtocol');
         $extendProtocol->data     = '1234567890';
         $extendProtocol->position = 10;
 
@@ -80,8 +80,8 @@ class TestExtendProtocol extends TestHelper
      */
     public function stream_openAndSetModuleTest()
     {
-        $extendProtocol = Mock::m('System\Core\Extend\ExtendProtocol');
-        $this->compareValue($extendProtocol, $extendProtocol->setModule(new TestModule()), 'setModule');
+        $extendProtocol = Phantom::m('System\Core\Extend\ExtendProtocol');
+        $this->compareValue($extendProtocol->getOrigin(), $extendProtocol->setModule(new TestModule()), 'setModule');
         $this->compareValue(true, $extendProtocol->stream_open('path'), 'stream_open');
     }
 }

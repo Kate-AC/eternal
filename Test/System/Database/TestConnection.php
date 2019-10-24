@@ -8,7 +8,7 @@ namespace Test\System\Database;
 
 use System\Database\Connection;
 use System\Exception\DatabaseException;
-use Test\Mock;
+use Phantom\Phantom;
 use Test\TestHelper;
 
 class TestConnection extends TestHelper
@@ -20,6 +20,7 @@ class TestConnection extends TestHelper
         'master' => [
             'use'      => true,
             'host'     => 'localhost',
+            'port'     => 3306,
             'database' => 'vega',
             'user'     => 'root',
             'password' => 'root'
@@ -27,6 +28,7 @@ class TestConnection extends TestHelper
         'slave1' => [
             'use'      => true,
             'host'     => 'localhost',
+            'port'     => 3306,
             'database' => 'vega',
             'user'     => 'slave',
             'password' => 'slave'
@@ -34,6 +36,7 @@ class TestConnection extends TestHelper
         'slave2' => [
             'use'      => true,
             'host'     => 'localhost',
+            'port'     => 3306,
             'database' => 'vega',
             'user'     => 'slave',
             'password' => 'slave'
@@ -41,6 +44,7 @@ class TestConnection extends TestHelper
         'slave3' => [
             'use'      => false,
             'host'     => 'localhost',
+            'port'     => 3306,
             'database' => 'vega',
             'user'     => 'slave',
             'password' => 'slave'
@@ -52,12 +56,11 @@ class TestConnection extends TestHelper
      */
     public function getConnection()
     {
-        $connection = Mock::m('System\Database\Connection');
-        $connection
-            ->_setMethod('getConnectionList')
-            ->_setArgs()
-            ->_setReturn($this->configList)
-            ->e();
+        $connection = Phantom::m('System\Database\Connection')
+            ->setMethod('getConnectionList')
+            ->setArgs()
+            ->setReturn($this->configList)
+            ->exec();
 
         $connection->pdo = [];
 
@@ -87,12 +90,11 @@ class TestConnection extends TestHelper
             }
         }
 
-        $connection = Mock::m('System\Database\Connection');
-        $connection
-            ->_setMethod('getConnectionList')
-            ->_setArgs()
-            ->_setReturn($configList)
-            ->e();
+        $connection = Phantom::m('System\Database\Connection')
+            ->setMethod('getConnectionList')
+            ->setArgs()
+            ->setReturn($configList)
+            ->exec();
         $connection->pdo = [];
         $connection->start();
         $this->compareValue('master', $connection->getUseConnection(), 'masterのみの場合');
@@ -102,12 +104,11 @@ class TestConnection extends TestHelper
             $configList[$key]['use'] = false;
         }
 
-        $connection = Mock::m('System\Database\Connection');
-        $connection
-            ->_setMethod('getConnectionList')
-            ->_setArgs()
-            ->_setReturn($configList)
-            ->e();
+        $connection = Phantom::m('System\Database\Connection')
+            ->setMethod('getConnectionList')
+            ->setArgs()
+            ->setReturn($configList)
+            ->exec();
         $connection->pdo = [];
 
         try {
@@ -123,7 +124,7 @@ class TestConnection extends TestHelper
      */
     public function getConnectionListTest()
     {
-        $connection = Mock::m('System\Database\Connection');
+        $connection = Phantom::m('System\Database\Connection');
         $configList = $connection->getConnectionList();
         $this->compareValue(true, isset($configList['master']), 'マスタ設定の存在確認のみ');
     }
@@ -133,21 +134,16 @@ class TestConnection extends TestHelper
      */
     public function getTest()
     {
-        $connection = $this->getConnection();
-        $connection
-            ->_setMethod('getConnectionList')
-            ->_setArgs()
-            ->_setReturn($this->configList)
-            ->e();
+        $connection = $this->getConnection()
+            ->setMethod('getConnectionList')
+            ->setArgs()
+            ->setReturn($this->configList)
+            ->exec();
         $connection->pdo = [];
         $connection->start();
 
-        $property = new \ReflectionProperty('System\Database\Connection', 'pdo');
-        $property->setAccessible(true);
-        $pdoList = $property->getValue();
-
-        $this->compareValue($pdoList['master'], $connection->get('master'), 'masterのコネクション');
-        $this->compareValue($pdoList['slave1'], $connection->get('slave1'), 'slaveのコネクション');
+        $this->compareValue(true, $connection->get('master') instanceof \PDO, 'masterのコネクション');
+        $this->compareValue(true, $connection->get('slave1') instanceof \PDO, 'slaveのコネクション');
 
         try {
             $connection->get('aaa');
@@ -162,12 +158,11 @@ class TestConnection extends TestHelper
      */
     public function getAutoTest()
     {
-        $connection = $this->getConnection();
-        $connection
-            ->_setMethod('getConnectionList')
-            ->_setArgs()
-            ->_setReturn($this->configList)
-            ->e();
+        $connection = $this->getConnection()
+            ->setMethod('getConnectionList')
+            ->setArgs()
+            ->setReturn($this->configList)
+            ->exec();
         $connection->pdo = [];
         $connection->start();
 
@@ -176,9 +171,9 @@ class TestConnection extends TestHelper
         $pdoList = $property->getValue();
 
         $connection->get('master');
-        $this->compareValue($pdoList['master'], $connection->getAuto(), 'masterのコネクション');
+        $this->compareValue(true, $connection->getAuto() instanceof \PDO, 'masterのコネクション');
 
         $connection->get('slave1');
-        $this->compareValue($pdoList['slave1'], $connection->getAuto(), 'slaveのコネクション');
+        $this->compareValue(true, $connection->getAuto() instanceof \PDO, 'slaveのコネクション');
     }
 }

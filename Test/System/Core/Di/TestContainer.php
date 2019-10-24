@@ -6,7 +6,7 @@
 
 namespace Test\System\Core\Di;
 
-use Test\Mock;
+use Phantom\Phantom;
 use Test\TestHelper;
 use System\Core\AutoLoader;
 use System\Core\Cache;
@@ -40,7 +40,7 @@ class TestContainer extends TestHelper
      */
     public function getTest()
     {
-        $container = Mock::m('System\Core\Di\Container');
+        $container = Phantom::m('System\Core\Di\Container');
 
         $result            = new \stdClass();
         $namespace         = 'Test\Test';
@@ -49,36 +49,37 @@ class TestContainer extends TestHelper
             new DependencyDto('d', ['e', 'f'])
         ];
 
-        $container->cache = Mock::m('System\Core\Cache')
-            ->_setMethod('getCache')
-            ->_setArgs($namespace)
-            ->_setReturn(null)
-            ->e();
+        $container->cache = Phantom::m('System\Core\Cache')
+            ->setMethod('getCache')
+            ->setArgs($namespace)
+            ->setReturn(null)
+            ->exec();
 
-        $container->dependencySearcher = Mock::m('System\Core\Di\DependencySearcher')
-            ->_setMethod('search')
-            ->_setArgs($namespace)
-            ->_setReturn($dependencyDtoList)
-            ->e();
+        $container->dependencySearcher = Phantom::m('System\Core\Di\DependencySearcher')
+            ->setMethod('search')
+            ->setArgs($namespace)
+            ->setReturn($dependencyDtoList)
+            ->exec();
 
-        $dependencyInjector = Mock::m('System\Core\Di\DependencyInjector')
-            ->_setMethod('create')
-            ->_setArgs($dependencyDtoList)
-            ->_setReturn(null)
-            ->e();
-        $dependencyInjector->_setMethod('getResolvedClass')
-            ->_setArgs($namespace)
-            ->_setReturn($result)
-            ->e();
+        $dependencyInjector = Phantom::m('System\Core\Di\DependencyInjector')
+            ->setMethod('create')
+            ->setArgs($dependencyDtoList)
+            ->setReturn(null)
+            ->exec();
+        $dependencyInjector
+            ->setMethod('getResolvedClass')
+            ->setArgs($namespace)
+            ->setReturn($result)
+            ->exec();
         $container->dependencyInjector = $dependencyInjector;
 
         $this->compareValue($result, $container->get($namespace), 'キャッシュが存在しない場合');
 
-        $container->cache = Mock::m('System\Core\Cache')
-            ->_setMethod('getCache')
-            ->_setArgs($namespace)
-            ->_setReturn($result)
-            ->e();
+        $container->cache = Phantom::m('System\Core\Cache')
+            ->setMethod('getCache')
+            ->setArgs($namespace)
+            ->setReturn($result)
+            ->exec();
 
         $this->compareValue($result, $container->get($namespace), 'キャッシュが存在する場合');
     }
@@ -88,7 +89,7 @@ class TestContainer extends TestHelper
      */
     public function getByTableTest()
     {
-        $container = Mock::m('System\Core\Di\Container');
+        $container = Phantom::m('System\Core\Di\Container');
 
         $result           = new \stdClass();
         $table            = 'test_tbl';
@@ -98,47 +99,49 @@ class TestContainer extends TestHelper
             new DependencyDto('d', ['e', 'f'])
         ];
 
-        $cache = Mock::m('System\Core\Cache')
-            ->_setMethod('getCache')
-            ->_setArgs($table)
-            ->_setReturn(null)
-            ->e();
-        $cache->_setMethod('setCache')
-            ->_setArgs($table, $result)
-            ->_setReturn(null)
-            ->e();
+        $cache = Phantom::m('System\Core\Cache')
+            ->setMethod('getCache')
+            ->setArgs($table)
+            ->setReturn(null)
+            ->exec();
+        $cache
+            ->setMethod('setCache')
+            ->setArgs($table, $result)
+            ->setReturn(null)
+            ->exec();
         $container->cache = $cache;
 
-        $dependencySearcher = Mock::m('System\Core\Di\DependencySearcher')
-            ->_setMethod('searchByTable')
-            ->_setArgs($table)
-            ->_setReturn($namespace)
-            ->e();
+        $dependencySearcher = Phantom::m('System\Core\Di\DependencySearcher')
+            ->setMethod('searchByTable')
+            ->setArgs($table)
+            ->setReturn($namespace)
+            ->exec();
         $dependencySearcher
-            ->_setMethod('getDependencyDtoList')
-            ->_setArgs()
-            ->_setReturn($dependencyDtoList)
-            ->e();
+            ->setMethod('getDependencyDtoList')
+            ->setArgs()
+            ->setReturn($dependencyDtoList)
+            ->exec();
         $container->dependencySearcher = $dependencySearcher;
 
-        $dependencyInjector = Mock::m('System\Core\Di\DependencyInjector')
-            ->_setMethod('create')
-            ->_setArgs($dependencyDtoList)
-            ->_setReturn(null)
-            ->e();
-        $dependencyInjector->_setMethod('getResolvedClass')
-            ->_setArgs($namespace)
-            ->_setReturn($result)
-            ->e();
+        $dependencyInjector = Phantom::m('System\Core\Di\DependencyInjector')
+            ->setMethod('create')
+            ->setArgs($dependencyDtoList)
+            ->setReturn(null)
+            ->exec();
+        $dependencyInjector
+            ->setMethod('getResolvedClass')
+            ->setArgs($namespace)
+            ->setReturn($result)
+            ->exec();
         $container->dependencyInjector = $dependencyInjector;
 
         $this->compareValue($result, $container->getByTable($table), 'キャッシュが存在しない場合');
 
-        $container->cache = Mock::m('System\Core\Cache')
-            ->_setMethod('getCache')
-            ->_setArgs($table)
-            ->_setReturn($result)
-            ->e();
+        $container->cache = Phantom::m('System\Core\Cache')
+            ->setMethod('getCache')
+            ->setArgs($table)
+            ->setReturn($result)
+            ->exec();
 
         $this->compareValue($result, $container->getByTable($table), 'キャッシュが存在する場合');
     }

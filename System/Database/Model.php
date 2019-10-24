@@ -15,6 +15,7 @@ use System\Database\Query\InsertQuery;
 use System\Database\Query\SelectQuery;
 use System\Database\Query\UpdateQuery;
 use System\Exception\SystemException;
+use System\Util\Kit;
 use System\Util\Str;
 
 class Model
@@ -117,7 +118,7 @@ class Model
         $propertyList = (new \ReflectionClass($this))->getProperties();
 
         foreach ($propertyList as $property) {
-            if (is_null($type = Str::getDocCommentByModelProperty($property->getDocComment()))) {
+            if (is_null($type = Kit::getDocCommentByModelProperty($property->getDocComment()))) {
                 continue;
             }
             $getter = Str::columnToGetter($property->getName());

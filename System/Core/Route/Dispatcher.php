@@ -65,8 +65,8 @@ class Dispatcher
                 $firstProcess->execute();
             }
 
-            $nameSpace  = $this->request->getControllerNameSpace();
-            $controller = $this->container->get($nameSpace);
+            $namespace  = $this->request->getControllerNameSpace();
+            $controller = $this->container->get($namespace);
 
             $controller->_initialize(
                 $this->container,

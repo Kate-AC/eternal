@@ -31,19 +31,19 @@ class Kit
      */
     public static function pathToNameSpace($filePath)
     {
-        $nameSpace = str_replace(['.php', SRC_DIR], '', $filePath);
-        return str_replace('/', '\\', $nameSpace);
+        $namespace = str_replace(['.php', SRC_DIR, CURRENT_DIR], '', $filePath);
+        return str_replace('/', '\\', $namespace);
     }
 
     /**
      * 名前空間からファイルパスに変換する
      *
-     * @param string $nameSpace
+     * @param string $namespace
      * @return string
      */
-    public static function nameSpaceToPath($nameSpace)
+    public static function nameSpaceToPath($namespace)
     {
-        $path = str_replace('\\', '/', $nameSpace) . '.php';
+        $path = str_replace('\\', '/', $namespace) . '.php';
 
         if (0 === strpos($path, str_replace(CURRENT_DIR, '', SYSTEM_DIR))) {
             return CURRENT_DIR . $path;

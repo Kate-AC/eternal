@@ -6,9 +6,9 @@
 
 namespace Test\System\Database\Query;
 
+use Phantom\Phantom;
 use System\Database\Query\InsertQuery;
 use System\Exception\DatabaseException;
-use Test\Mock;
 use Test\TestHelper;
 
 use Test\TestInsertModel;
@@ -20,12 +20,11 @@ class TestInsertQuery extends TestHelper
      */
     public function createTest()
     {
-        $insertQuery = Mock::m('System\Database\Query\InsertQuery');
-        $insertQuery
-            ->_setMethod('getExplainLine')
-            ->_setArgs()
-            ->_setReturn('A')
-            ->e();
+        $insertQuery = Phantom::m('System\Database\Query\InsertQuery')
+            ->setMethod('getExplainLine')
+            ->setArgs()
+            ->setReturn('A')
+            ->exec();
 
         $insertQuery->tableName    = 'B';
         $insertQuery->insertColumn = 'C';
@@ -39,7 +38,7 @@ class TestInsertQuery extends TestHelper
      */
     public function insertTest()
     {
-        $insertQuery = Mock::m('System\Database\Query\InsertQuery');
+        $insertQuery = Phantom::m('System\Database\Query\InsertQuery');
         $query       = 'query';
         $placeholder = 'placeholder';
 
@@ -49,57 +48,58 @@ class TestInsertQuery extends TestHelper
         ];
         $expectList = $classList;
 
-        $insertQuery->_setMethod('createInsertParts')
-            ->_setArgs($classList)
-            ->_setReturn(null)
-            ->e();
+        $insertQuery
+            ->setMethod('createInsertParts')
+            ->setArgs($classList)
+            ->setReturn(null)
+            ->exec();
 
         $keyName = 'id';
         $insertQuery->primaryKeys = [$keyName];
 
         $insertQuery
-            ->_setMethod('create')
-            ->_setArgs()
-            ->_setReturn($query)
-            ->e();
+            ->setMethod('create')
+            ->setArgs()
+            ->setReturn($query)
+            ->exec();
 
         $insertQuery->placeholder = $placeholder;
 
-        $prepare = Mock::m()
-            ->_setMethod('execute')
-            ->_setArgs($placeholder)
-            ->_setReturn(null)
-            ->e();
+        $prepare = Phantom::m()
+            ->setMethod('execute')
+            ->setArgs($placeholder)
+            ->setReturn(null)
+            ->exec();
 
         $prepare
-            ->_setMethod('rowCount')
-            ->_setArgs()
-            ->_setReturn(100)
-            ->e();
+            ->setMethod('rowCount')
+            ->setArgs()
+            ->setReturn(100)
+            ->exec();
 
-        $pdo = Mock::m()
-            ->_setMethod('inTransaction')
-            ->_setArgs()
-            ->_setReturn(true)
-            ->e();
+        $pdo = Phantom::m()
+            ->setMethod('inTransaction')
+            ->setArgs()
+            ->setReturn(true)
+            ->exec();
 
-        $pdo->_setMethod('prepare')
-            ->_setArgs($query)
-            ->_setReturn($prepare)
-            ->e();
+        $pdo->setMethod('prepare')
+            ->setArgs($query)
+            ->setReturn($prepare)
+            ->exec();
 
         $lastInsertId = 4;
         $pdo
-            ->_setMethod('lastInsertId')
-            ->_setArgs($keyName)
-            ->_setReturn($lastInsertId)
-            ->e();
+            ->setMethod('lastInsertId')
+            ->setArgs($keyName)
+            ->setReturn($lastInsertId)
+            ->exec();
 
-        $connection = Mock::m('System\Database\Connection')
-            ->_setMethod('get')
-            ->_setArgs('master')
-            ->_setReturn($pdo)
-            ->e();
+        $connection = Phantom::m('System\Database\Connection')
+            ->setMethod('get')
+            ->setArgs('master')
+            ->setReturn($pdo)
+            ->exec();
 
         $insertQuery->connection = $connection;
         $this->compareValue(100, $insertQuery->insert($classList));
@@ -127,19 +127,19 @@ class TestInsertQuery extends TestHelper
      */
     public function insertTestWhenExcepion()
     {
-        $insertQuery = Mock::m('System\Database\Query\InsertQuery');
+        $insertQuery = Phantom::m('System\Database\Query\InsertQuery');
 
-        $pdo = Mock::m()
-            ->_setMethod('inTransaction')
-            ->_setArgs()
-            ->_setReturn(false)
-            ->e();
+        $pdo = Phantom::m()
+            ->setMethod('inTransaction')
+            ->setArgs()
+            ->setReturn(false)
+            ->exec();
 
-        $connection = Mock::m('System\Database\Connection')
-            ->_setMethod('get')
-            ->_setArgs('master')
-            ->_setReturn($pdo)
-            ->e();
+        $connection = Phantom::m('System\Database\Connection')
+            ->setMethod('get')
+            ->setArgs('master')
+            ->setReturn($pdo)
+            ->exec();
 
         $insertQuery->connection = $connection;
 
@@ -159,7 +159,7 @@ class TestInsertQuery extends TestHelper
      */
     public function createInsertPartsTest()
     {
-        $insertQuery = Mock::m('System\Database\Query\InsertQuery');
+        $insertQuery = Phantom::m('System\Database\Query\InsertQuery');
         $insertQuery->calledModel = 'Test\TestInsertModel';
         $testModel = TestInsertModel::make([
             'id'       => 1,
@@ -170,7 +170,7 @@ class TestInsertQuery extends TestHelper
 
         $insertQuery->createInsertParts($testModel);
         $this->compareValue('(id, name, datetime, point)', $insertQuery->insertColumn, 'カラム名');
-        $this->compareValue('(1, "test", "2017-10-10 00:00:00", ST_GeomFromText("POINT(0 0)"))', $insertQuery->insertValue, '値');
+        $this->compareValue("(1, 'test', '2017-10-10 00:00:00', ST_GeomFromText('POINT(0 0)'))", $insertQuery->insertValue, '値');
     }
 
     /**
@@ -180,15 +180,16 @@ class TestInsertQuery extends TestHelper
     {
         $query = 'A = ?, B = ?, C = ?';
 
-        $insertQuery = Mock::m('System\Database\Query\InsertQuery');
-        $insertQuery->_setMethod('createInsertParts')
-            ->_setArgs([])
-            ->_setReturn(null)
-            ->e();
-        $insertQuery->_setMethod('create')
-            ->_setArgs()
-            ->_setReturn($query)
-            ->e();
+        $insertQuery = Phantom::m('System\Database\Query\InsertQuery')
+            ->setMethod('createInsertParts')
+            ->setArgs([])
+            ->setReturn(null)
+            ->exec();
+        $insertQuery
+            ->setMethod('create')
+            ->setArgs()
+            ->setReturn($query)
+            ->exec();
         $insertQuery->placeholder = [1, 2, 3];
         $this->compareValue('A = 1, B = 2, C = 3', $insertQuery->getQuery([]));
     }
@@ -196,10 +197,10 @@ class TestInsertQuery extends TestHelper
 
 namespace Test;
 
-use System\Database\BaseModel;
+use System\Database\Model;
 use System\Type\Other\Point;
 
-class TestInsertModel extends BaseModel
+class TestInsertModel extends Model
 {
     /**
      * @model int

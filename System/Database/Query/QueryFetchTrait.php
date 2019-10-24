@@ -22,7 +22,7 @@ trait QueryFetchTrait
         $prepared = $this->escape($query);
         $result   = $prepared->fetch();
 
-    if (false === $result) {
+        if (false === $result) {
             return null;
         }
 

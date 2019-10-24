@@ -9,7 +9,7 @@ namespace Test\System\Util;
 use System\Database\Connection;
 use System\Exception\SystemException;
 use System\Util\ModelCreator;
-use Test\Mock;
+use Phantom\Phantom;
 use Test\TestHelper;
 
 class TestModelCreator extends TestHelper
@@ -24,33 +24,34 @@ class TestModelCreator extends TestHelper
 
     private function getModelCreator()
     {
-        $modelCreator = Mock::m('System\Util\ModelCreator');
+        $modelCreator = Phantom::m('System\Util\ModelCreator');
 
-        $prepare = Mock::m()
-            ->_setMethod('setFetchMode')
-            ->_setArgs(\PDO::FETCH_ASSOC)
-            ->_setReturn()
-            ->e();
+        $prepare = Phantom::m()
+            ->setMethod('setFetchMode')
+            ->setArgs(\PDO::FETCH_ASSOC)
+            ->setReturn()
+            ->exec();
 
-        $prepare->_setMethod('fetchAll')
-            ->_setArgs()
-            ->_setReturn([
-                ['dummy' => 'hoge_tbl'],
-                ['dummy' => 'fuga_tbl']
+        $prepare
+            ->setMethod('fetchAll')
+            ->setArgs()
+            ->setReturn([
+                ['dummy' => 'hoge'],
+                ['dummy' => 'fuga']
             ])
-            ->e();
+            ->exec();
 
-        $pdo = Mock::m()
-            ->_setMethod('query')
-            ->_setArgs('SHOW TABLES')
-            ->_setReturn($prepare)
-            ->e();
+        $pdo = Phantom::m()
+            ->setMethod('query')
+            ->setArgs('SHOW TABLES')
+            ->setReturn($prepare)
+            ->exec();
 
-        $connection = Mock::m('System\Database\Connection')
-            ->_setMethod('getAuto')
-            ->_setArgs()
-            ->_setReturn($pdo)
-            ->e();
+        $connection = Phantom::m('System\Database\Connection')
+            ->setMethod('getAuto')
+            ->setArgs()
+            ->setReturn($pdo)
+            ->exec();
 
         $modelCreator->connection = $connection;
 
@@ -68,7 +69,7 @@ class TestModelCreator extends TestHelper
         $modelCreator->initialize('App\Model\Fuga');
 
         $this->compareValue('Fuga', $modelCreator->getModelName(), 'モデル名');
-        $this->compareValue('fuga_tbl', $modelCreator->tableName, 'テーブル名');
+        $this->compareValue('fuga', $modelCreator->tableName, 'テーブル名');
 
         try {
             $modelCreator->initialize('App\Model\Piyo');
@@ -101,18 +102,17 @@ class TestModelCreator extends TestHelper
      */
     public function parseColumnAndGetTypeAndGetCastTypeTest()
     {
-        $reflection   = new \ReflectionClass('System\Util\ModelCreator');
-        $modelCreator = $reflection->newInstanceWithoutConstructor();
+        $modelCreator = Phantom::m('System\Util\ModelCreator');
 
-        $prepare = Mock::m()
-            ->_setMethod('setFetchMode')
-            ->_setArgs(\PDO::FETCH_ASSOC)
-            ->_setReturn()
-            ->e();
+        $prepare = Phantom::m()
+            ->setMethod('setFetchMode')
+            ->setArgs(\PDO::FETCH_ASSOC)
+            ->setReturn()
+            ->exec();
 
-        $prepare->_setMethod('fetchAll')
-            ->_setArgs()
-            ->_setReturn([
+        $prepare->setMethod('fetchAll')
+            ->setArgs()
+            ->setReturn([
                 [
                     'Key'     => 'PRI',
                     'Field'   => 'id',
@@ -144,35 +144,24 @@ class TestModelCreator extends TestHelper
                     'Type'    => 'geometry'
                 ]
             ])
-            ->e();
+            ->exec();
 
-        $pdo = Mock::m()
-            ->_setMethod('query')
-            ->_setArgs('SHOW COLUMNS FROM hoge_tbl')
-            ->_setReturn($prepare)
-            ->e();
+        $pdo = Phantom::m()
+            ->setMethod('query')
+            ->setArgs('SHOW COLUMNS FROM hoge')
+            ->setReturn($prepare)
+            ->exec();
 
-        $connection = Mock::m('System\Database\Connection')
-            ->_setMethod('getAuto')
-            ->_setArgs()
-            ->_setReturn($pdo)
-            ->e();
+        $connection = Phantom::m('System\Database\Connection')
+            ->setMethod('getAuto')
+            ->setArgs()
+            ->setReturn($pdo)
+            ->exec();
 
-        $method = new \ReflectionMethod($modelCreator, 'parseColumn');
-        $method->setAccessible(true);
-
-        $property = new \ReflectionProperty($modelCreator, 'tableName');
-        $property->setAccessible(true);
-        $property->setValue($modelCreator, 'hoge_tbl');
-
-        $property = new \ReflectionProperty($modelCreator, 'connection');
-        $property->setAccessible(true);
-        $property->setValue($modelCreator, $connection);
-
-        $method->invoke($modelCreator);
-
-        $property = new \ReflectionProperty($modelCreator, 'columnInfoList');
-        $property->setAccessible(true);
+        $modelCreator->tableName = 'hoge';
+        $modelCreator->modelName = 'Hoge';
+        $modelCreator->connection = $connection;
+        $modelCreator->parseColumn();
 
         $expected = [
             [
@@ -180,6 +169,7 @@ class TestModelCreator extends TestHelper
                 'type'    => 'int',
                 'cast'    => 'intval',
                 'getter'  => 'getId',
+                'setter'  => 'setId',
                 'default' => 'null'
             ],
             [
@@ -187,6 +177,7 @@ class TestModelCreator extends TestHelper
                 'type'    => 'string',
                 'cast'    => 'strval',
                 'getter'  => 'getName',
+                'setter'  => 'setName',
                 'default' => 'hoge'
             ],
             [
@@ -194,6 +185,7 @@ class TestModelCreator extends TestHelper
                 'type'    => '\DateTime',
                 'cast'    => 'new \DateTime',
                 'getter'  => 'getTime',
+                'setter'  => 'setTime',
                 'default' => 'null'
             ],
             [
@@ -201,6 +193,7 @@ class TestModelCreator extends TestHelper
                 'type'    => '\DateTime',
                 'cast'    => 'new \DateTime',
                 'getter'  => 'getDate',
+                'setter'  => 'setDate',
                 'default' => 'new \DateTime()'
             ],
             [
@@ -208,11 +201,12 @@ class TestModelCreator extends TestHelper
                 'type'    => 'Point',
                 'cast'    => 'new Point',
                 'getter'  => 'getCoordinate',
+                'setter'  => 'setCoordinate',
                 'default' => 'null'
             ]
         ];
 
-        $this->compareValue($expected, $property->getValue($modelCreator));
+        $this->compareValue($expected, $modelCreator->columnInfoList);
     }
 
     /**
@@ -222,7 +216,7 @@ class TestModelCreator extends TestHelper
      */
     public function getPropertyAndGetSetterAndGetGetterTest()
     {
-        $modelCreator = Mock::m('System\Util\ModelCreator');
+        $modelCreator = Phantom::m('System\Util\ModelCreator');
 
         $this->compareValue('', $modelCreator->getProperty(), 'getProprety');
         $this->compareValue('', $modelCreator->getSetter(), 'getSetter');
@@ -234,7 +228,7 @@ class TestModelCreator extends TestHelper
      */
     public function existEntityTest()
     {
-        $modelCreator = Mock::m('System\Util\ModelCreator');
+        $modelCreator = Phantom::m('System\Util\ModelCreator');
         $modelCreator->explodedNamespaceList = ['hoge', 'fuga'];
         $this->compareValue(false, $modelCreator->existEntity());
     }
@@ -244,7 +238,7 @@ class TestModelCreator extends TestHelper
      */
     public function createEntityTest()
     {
-        $modelCreator = Mock::m('System\Util\ModelCreator');
+        $modelCreator = Phantom::m('System\Util\ModelCreator');
         $modelCreator->explodedNamespaceList = ['hoge', 'fuga', 'piyo'];
         $this->compareValue(true, $modelCreator->createEntity());
     }
@@ -254,12 +248,11 @@ class TestModelCreator extends TestHelper
      */
     public function createSkeletonTest()
     {
-        $modelCreator = Mock::m('System\Util\ModelCreator');
-        $modelCreator->_setMethod('parseColumn')
-            ->_setArgs()
-            ->_setReturn()
-            ->e();
-        $modelCreator->explodedNamespaceList = ['hoge', 'fuga', 'piyo'];
+        $modelCreator = new ModelCreator(new Connection());
+        $property = new \ReflectionProperty($modelCreator, 'explodedNamespaceList');
+        $property->setAccessible(true);
+        $property->setValue($modelCreator, ['hoge', 'fuga', 'piyo']);
+
         $this->compareValue(true, $modelCreator->createEntity());
     }
 }
@@ -277,7 +270,7 @@ function mkdir($path)
 /**
  * file_put_contentsのオーバーライド
  */
-function file_put_contents()
+function file_put_contents($path, $entry)
 {
     return true;
 }

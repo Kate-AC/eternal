@@ -119,8 +119,8 @@ class Controller
         $template = sprintf('%s%s.%s', VIEW_DIR, $template, VIEW_EXTENSION);
 
         $this->_useTemplate = $template;
-        $this->_existTemplate($template);
-        $this->_includeTemplate($template);
+        $this->_existView($template);
+        $this->_includeView($template);
     }
 
     /**
@@ -128,7 +128,7 @@ class Controller
      *
      * @param string $template
      */
-    private function _existTemplate($template)
+    protected function _existView($template)
     {
         if (!file_exists($template)) {
             throw new ControllerException(sprintf(
@@ -146,7 +146,7 @@ class Controller
      * @param string $template
      * @return boolean
      */
-    private function _includeTemplate($template)
+    protected function _includeView($template)
     {
         foreach ($this->_useClassForView as $shortName => $namespace) {
             RenderModule::get()->setClassForView($shortName, $namespace);
@@ -204,7 +204,6 @@ class Controller
     {
         $url = sprintf('Location: //%s%s', $this->request->server('SERVER_NAME'), $to);
         header($url);
-        exit;
     }
 
     /**

@@ -1,16 +1,16 @@
 <?php
 
 /**
- * SessionManagerのテスト
+ * Sessionのテスト
  */
 
 namespace Test\System\Util;
 
-use System\Util\SessionManager;
+use System\Util\Session;
 use Test\Mock;
 use Test\TestHelper;
 
-class TestSessionManager extends TestHelper
+class TestSession extends TestHelper
 {
     /**
      * set
@@ -20,7 +20,7 @@ class TestSessionManager extends TestHelper
      */
     public function setAndGetAndClearAndClearAllTest()
     {
-        $sessionManager = new SessionManager();
+        $sessionManager = new Session();
         $sessionManager->set('hoge', 10);
         $this->compareValue(10, $sessionManager->get('hoge'), 'セッションに値がある場合');
         $this->compareValue(null, $sessionManager->get('fuga'), 'セッションに値がない場合');
