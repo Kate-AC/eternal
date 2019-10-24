@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="ja">
-  <head>
-    <meta charset="UTF-8">
-    <title>NotFound</title>
-  </head>
-  <body>
-    <div>NotFound</div>
-  </body>
-</html>
+{% parent('layout') %}
+
+{% title %}Not Found{% /title %}
+
+{% body %}
+  <div>
+    <span style="font-weight: bold;">Not Found</span>
+  </div>
+{% /body %}
+

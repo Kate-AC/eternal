@@ -90,7 +90,7 @@ class Dispatcher
                 exit;
             }
             $this->extendProtocol->setModule(RenderModule::get())->start();
-            include_once(sprintf('%s://%s', ExtendProtocol::PROTOCOL, TEMPLATE_DIR . 'not_found.php'));
+            include_once(sprintf('%s://%snot_found.%s', ExtendProtocol::PROTOCOL, VIEW_DIR, VIEW_EXTENSION));
             $this->extendProtocol->end();
         }
     }
