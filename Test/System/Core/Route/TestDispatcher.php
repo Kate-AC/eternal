@@ -9,6 +9,7 @@ namespace Test\System\Core\Route;
 use System\Core\Di\Container;
 use System\Core\Extend\ExtendProtocol;
 use System\Core\Route\Request;
+use System\Core\Route\Route;
 use System\Core\Route\Dispatcher;
 use System\Log\SystemErrorLogger;
 use Phantom\Phantom;
@@ -21,9 +22,12 @@ class TestDispatcher extends TestHelper
      */
     public function __constructTest()
     {
+        $route = new Route();
+        $route->set(['/' => 'hoge@fuga']);
+
         $this->compareInstance(
             'System\Core\Route\Dispatcher',
-            new Dispatcher($this->container, new ExtendProtocol(), new Request(), new SystemErrorLogger)
+            new Dispatcher($this->container, new ExtendProtocol(), new Request($route), new SystemErrorLogger)
         );
     }
 

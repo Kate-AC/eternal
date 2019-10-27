@@ -6,6 +6,7 @@
 
 namespace System\Core\Route;
 
+use System\Core\Route\Route;
 use System\Type\Resource\File;
 use System\Type\Resource\Image;
 use System\Util\Kit;
@@ -34,14 +35,23 @@ class Request
     private $files;
 
     /**
+     * @var Route
+     */
+    private $route;
+
+    /**
      * コンストラクタ
      */
-    public function __construct()
+    public function __construct(Route $route)
     {
         $this->server = $_SERVER;
         $this->post   = $_POST;
         $this->get    = $_GET;
         $this->files  = $_FILES;
+        $this->route  = $route;
+
+        $this->route->resolve($this->server('REQUEST_URI', '/'));
+        $this->get = array_merge($this->get, $this->route->getValueList());
     }
 
     /**
@@ -177,15 +187,7 @@ class Request
      */
     public function getControllerNameSpace()
     {
-        $uriList = $this->getUri();
-        $nameSpace = [];
-        foreach ($uriList as $key => $value) {
-            if ($key !== count($uriList) - 1) {
-                $nameSpace[] = ucfirst(Str::snakeToCamel($value));
-            }
-        }
-
-        return Kit::pathToNameSpace(CONTROLLER_DIR . implode('/', $nameSpace) . 'Controller');
+        return $this->route->getController();
     }
 
     /**
@@ -195,32 +197,6 @@ class Request
      */
     public function getControllerMethod()
     {
-        $uriList = $this->getUri();
-        return end($uriList) . 'Action';
-    }
-
-    /**
-     * アクセスしてきたURLの末尾のスラッシュやindexの省略を考慮したURLを返す
-     *
-     * @return string[]
-     */
-    public function getUri()
-    {
-        $uri = ltrim($this->server['REQUEST_URI'], '/');
-        $uri = str_replace(CURRENT_DIR, '', $uri);
-
-        if (false !== strstr($uri, '?', true)) {
-            $uri = strstr($uri, '?', true);
-        }
-
-        $uriList = explode('/', $uri);
-        $last        = count($uriList) - 1;
-        $uriList[$last] = '' !== $uriList[$last] ? $uriList[$last] : 'index';
-
-        if (1 === count($uriList)) {
-            $uriList = array_merge(['index'], $uriList);
-        }
-
-        return $uriList;
+        return $this->route->getMethod();
     }
 }

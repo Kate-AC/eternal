@@ -8,6 +8,7 @@ namespace Test\System\Core\Route;
 
 use System\Core\Extend\ExtendProtocol;
 use System\Core\Route\Request;
+use System\Core\Route\Route;
 use System\Type\Resource\File;
 use System\Type\Resource\Image;
 use Phantom\Phantom;
@@ -20,7 +21,9 @@ class TestRequest extends TestHelper
      */
     public function __constructTest()
     {
-        $this->compareInstance('System\Core\Route\Request', new Request());
+        $route = new Route();
+        $route->set(['/' => 'hoge@fuga']);
+        $this->compareInstance('System\Core\Route\Request', new Request($route));
     }
 
     /**
@@ -132,13 +135,9 @@ class TestRequest extends TestHelper
      */
     public function getControllerNameSpaceTest()
     {
-        $uriList = ['admin', 'index'];
-
-        $request = Phantom::m('System\Core\Route\Request')
-            ->setMethod('getUri')
-            ->setArgs()
-            ->setReturn($uriList)
-            ->exec();
+        $route = new Route();
+        $route->set(['/' => 'App\Controller\AdminController@fuga']);
+        $request = new Request($route);
 
         $this->compareValue('App\Controller\AdminController', $request->getControllerNameSpace());
     }
@@ -148,28 +147,11 @@ class TestRequest extends TestHelper
      */
     public function getControllerMethodTest()
     {
-        $uriList = ['admin', 'index'];
+        $route = new Route();
+        $route->set(['/' => 'App\Controller\AdminController@fuga']);
+        $request = new Request($route);
 
-        $request = Phantom::m('System\Core\Route\Request')
-            ->setMethod('getUri')
-            ->setArgs()
-            ->setReturn($uriList)
-            ->exec();
-
-        $this->compareValue('indexAction', $request->getControllerMethod());
-    }
-
-    /**
-     * getUri
-     */
-    public function getUri()
-    {
-        $uriList = ['admin', 'index'];
-
-        $request = Phantom::m('System\Core\Route\Request');
-        $request->server = ['REQUEST_URI' => '/admin/index?id=1'];
-
-        $this->compareValue($uriList, $request->getUri());
+        $this->compareValue('fuga', $request->getControllerMethod());
     }
 }
 

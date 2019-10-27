@@ -10,6 +10,7 @@ use System\Core\Di\Container;
 use System\Core\Extend\ExtendProtocol;
 use System\Core\Extend\Module\RenderModule;
 use System\Core\Route\Request;
+use System\Core\Route\Route;
 use System\Exception\ControllerException;
 use Phantom\Phantom;
 use Test\TestHelper;
@@ -64,9 +65,12 @@ class TestController extends TestHelper
      */
     public function _initializeTest()
     {
+        $route = new Route();
+        $route->set(['/' => 'hoge@fuga']);
+
         $testController = new TestHogeController();
         $extendProtocol = new ExtendProtocol();
-        $request        = new Request();
+        $request        = new Request($route);
         $testController->_initialize($this->container, $extendProtocol, $request);
         $reflection = new \ReflectionClass($testController);
         $property = $reflection->getProperty('container');
