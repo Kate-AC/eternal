@@ -1,10 +1,11 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
   mode: 'development',
   entry: './assets/js/main.js',
+  devtool: 'inline-source-map',
   output: {
     filename: 'js/main.js',
     path: path.resolve(__dirname, 'public')
@@ -14,17 +15,10 @@ module.exports = {
       {
         test: /\.(sa|sc|c)ss$/,
         use: [
-          MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader',
-            options: {
-              url: false,
-              sourceMap: true
-            }
-          },
-          {
-            loader: 'sass-loader'
-          }
+          'vue-style-loader',
+          'style-loader',
+          'css-loader',
+          'sass-loader',
         ]
       },
       {

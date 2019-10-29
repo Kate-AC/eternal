@@ -26,6 +26,7 @@
     "npm-watch": "^0.6.0",
     "sass": "^1.23.1",
     "sass-loader": "^8.0.0",
+    "style-loader": "^1.0.0",
     "vue": "^2.6.10",
     "vue-loader": "^15.7.1",
     "vue-template-compiler": "^2.6.10",
