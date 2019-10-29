@@ -17,6 +17,9 @@ module.exports = {
         use: [
           'vue-style-loader',
           'style-loader',
+          {
+            loader: MiniCssExtractPlugin.loader,
+          },
           'css-loader',
           'sass-loader',
         ]
