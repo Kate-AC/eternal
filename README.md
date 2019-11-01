@@ -102,8 +102,8 @@ $route->set([
 例えば ` /hoge/100/fuga/99 ` でアクセスできる。
 その場合コントローラで以下のようにして値を取得できる。
 ```
-$this->get('user_id'); //100
-$this->get('number'); //99
+$this->request->get('user_id'); //100
+$this->request->get('number'); //99
 ```
 
 ## ■ MySQLを使用する 
