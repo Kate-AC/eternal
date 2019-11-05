@@ -65,6 +65,7 @@ class Dispatcher
                 $firstProcess->execute();
             }
 
+            $this->request->init();
             $namespace  = $this->request->getControllerNameSpace();
             $controller = $this->container->get($namespace);
 
@@ -89,7 +90,10 @@ class Dispatcher
                 var_dump($e->getMessage());
                 exit;
             }
-            $this->extendProtocol->setModule(RenderModule::get())->start();
+            $this->extendProtocol
+                ->setModule(RenderModule::get())
+                ->setModule(OverrideViewModule::get())
+                ->start();
             include_once(sprintf('%s://%snot_found.%s', ExtendProtocol::PROTOCOL, VIEW_DIR, VIEW_EXTENSION));
             $this->extendProtocol->end();
         }
