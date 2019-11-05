@@ -7,6 +7,7 @@
 namespace System\Core\Route;
 
 use System\Core\Extend\ExtendProtocol;
+use System\Core\Extend\Module\OverrideViewModule;
 use System\Core\Extend\Module\RenderModule;
 use System\Core\Di\Container;
 use System\Core\Route\Request;
