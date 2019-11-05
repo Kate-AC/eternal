@@ -49,7 +49,13 @@ class Request
         $this->get    = $_GET;
         $this->files  = $_FILES;
         $this->route  = $route;
+    }
 
+    /**
+     * 初期化処理
+     */
+    public function init()
+    {
         $this->route->resolve($this->server('REQUEST_URI', '/'));
         $this->get = array_merge($this->get, $this->route->getValueList());
     }
