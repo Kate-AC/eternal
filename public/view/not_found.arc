@@ -1,10 +1,20 @@
 {% parent('layout') %}
 
-{% title %}Not Found{% /title %}
+{% subTitle %}Not Found{% /subTitle %}
 
-{% body %}
+{% css %}
+ <style>
+div span {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+</style>
+{% /css %}
+
+{% content %}
   <div>
-    <span style="font-weight: bold;">Not Found</span>
+    <span style="">Not Found</span>
   </div>
-{% /body %}
+{% /content %}
 
+{% js %}{% /js %}
