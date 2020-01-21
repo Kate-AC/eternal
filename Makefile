@@ -5,6 +5,10 @@ empty:
 model:
 	php script/ModelMakeShell.php
 
+.PHONY: model-all
+model-all:
+	php script/AllModelMakeShell.php
+
 .PHONY: test
 test:
 	cd Test; php TestRunner.php

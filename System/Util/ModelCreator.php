@@ -93,12 +93,11 @@ class ModelCreator
     }
 
     /**
-     * 名前空間からテーブル名を取得する
+     * 全てのテーブル名を取得する
      *
-     * @return string
-     * @throws SystemException
+     * @return string[]
      */
-    private function getTableName()
+    public function getTableList()
     {
         $pdo = $this->connection->getAuto();
 
@@ -113,8 +112,18 @@ class ModelCreator
         }
 
         $prepare->setFetchMode(\PDO::FETCH_ASSOC);
-        $resultList = $prepare->fetchAll();
+        return $prepare->fetchAll();
+    }
 
+    /**
+     * 名前空間からテーブル名を取得する
+     *
+     * @return string
+     * @throws SystemException
+     */
+    private function getTableName()
+    {
+        $resultList = $this->getTableList();
         foreach ($resultList as $result) {
             $tableName = array_shift($result);
             if ($this->modelName === ucfirst(Str::snakeToCamel($tableName))) {
