@@ -4,7 +4,7 @@
  * ルーティングを設定する
  */
 
-$route->set([
+$route = [
     '/' => 'App\Controller\IndexController@indexAction'
-]);
+];
 
