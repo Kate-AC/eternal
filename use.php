@@ -45,7 +45,6 @@ $dependencyInjector = new DependencyInjector($cache);
 $container          = new Container($autoLoader, $cache, $dependencySearcher, $dependencyInjector);
 $extendProtocol     = new ExtendProtocol();
 $route              = new Route();
-require(CURRENT_DIR . 'route.php');
 $request            = new Request($route);
 $dispatcher         = new Dispatcher($container, $extendProtocol, $request, $systemErrorLogger);
 
