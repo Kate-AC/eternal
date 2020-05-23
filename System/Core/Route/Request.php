@@ -48,8 +48,6 @@ class Request
         $this->post   = $_POST;
         $this->get    = $_GET;
         $this->files  = $_FILES;
-        require(CURRENT_DIR . 'route.php'); //TODO
-        $this->route  = $route;
         $this->init();
     }
 
@@ -58,6 +56,9 @@ class Request
      */
     public function init()
     {
+        $route = [];
+        require(CURRENT_DIR . 'route.php');
+        $this->route->set($route);
         $this->route->resolve($this->server('REQUEST_URI', '/'));
         $this->get = array_merge($this->get, $this->route->getValueList());
     }
