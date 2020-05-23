@@ -54,6 +54,7 @@ class Route
             }
 
             if (count($this->valueList) !== substr_count($sprintf, '%s')) {
+                $this->clear();
                 continue;
             }
 
