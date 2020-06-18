@@ -402,10 +402,6 @@ class SelectQuery extends BaseQuery
     {
         $orderByArray = [];
         foreach ($this->orderBy as $i => $array) {
-            if (isset($this->propertyAsName[$array['column']])) {
-                $column = $this->propertyAsName[$array['column']];
-                $array['column'] = sprintf('`%s___%s`', $column['table'], $column['column']);
-            }
             $orderByArray[] = sprintf('%s %s', $array['column'], $array['type']);
         }
 
